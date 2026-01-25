@@ -7,6 +7,7 @@ import os
 import sys
 import tempfile
 import shutil
+import traceback
 from pathlib import Path
 
 
@@ -118,7 +119,6 @@ def test_content_generation():
             
     except Exception as e:
         print(f"   ❌ Content generation error: {e}")
-        import traceback
         traceback.print_exc()
         return False
 
@@ -210,7 +210,6 @@ def test_system_integration():
             
     except Exception as e:
         print(f"   ❌ System integration error: {e}")
-        import traceback
         traceback.print_exc()
         return False
 

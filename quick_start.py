@@ -6,6 +6,7 @@ Quick Start Script - Run this to get started immediately!
 import os
 import subprocess
 import sys
+import shutil
 
 
 def check_python_version():
@@ -33,7 +34,6 @@ def setup_config():
     # Create .env if it doesn't exist
     if not os.path.exists('.env'):
         if os.path.exists('.env.example'):
-            import shutil
             shutil.copy('.env.example', '.env')
             print("✅ Created .env file from template")
             print("   ⚠️  Please edit .env and add your Amazon Associate ID!")

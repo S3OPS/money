@@ -5,9 +5,12 @@ Generates product review content with embedded affiliate links
 """
 
 import os
+import sys
 import yaml
 import json
 import random
+import schedule
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict
@@ -63,7 +66,10 @@ class ContentGenerator:
     
     def generate_product_review(self, product: Dict) -> str:
         """Generate a product review with affiliate link"""
-        asin = product.get('asin', 'B08N5WRWNW')  # Default example ASIN
+        asin = product.get('asin')
+        if not asin:
+            raise ValueError("Product ASIN is required for generating affiliate links")
+        
         title = product.get('title', 'Amazing Product')
         category = product.get('category', 'General')
         price = product.get('price', 'Check Amazon')
@@ -218,9 +224,6 @@ class AutomatedContentSystem:
     
     def run_automated_schedule(self):
         """Run on automated schedule"""
-        import schedule
-        import time
-        
         schedule_config = self.config.get('schedule', {})
         
         if not schedule_config.get('enabled', False):
@@ -267,8 +270,6 @@ def main():
     system = AutomatedContentSystem()
     
     # Run once or schedule
-    import sys
-    
     if '--schedule' in sys.argv:
         system.run_automated_schedule()
     else:
