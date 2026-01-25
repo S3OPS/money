@@ -195,7 +195,7 @@ class ContentGenerator:
             filename = f"content_{timestamp}.md"
         
         filepath = self.output_dir / filename
-        filepath.write_text(content)
+        filepath.write_text(content, encoding='utf-8')
         
         return filepath
 
@@ -249,7 +249,7 @@ class AutomatedContentSystem:
         
         # Save metadata
         metadata_path = filepath.with_suffix('.json')
-        with open(metadata_path, 'w') as f:
+        with open(metadata_path, 'w', encoding='utf-8') as f:
             json.dump(metadata, f, indent=2)
         
         print(f"📊 Metadata saved to: {metadata_path}")
@@ -272,7 +272,7 @@ class AutomatedContentSystem:
                 metadata['publishing_results'] = publish_results
                 
                 # Update metadata file
-                with open(metadata_path, 'w') as f:
+                with open(metadata_path, 'w', encoding='utf-8') as f:
                     json.dump(metadata, f, indent=2)
                 
                 # Summary
