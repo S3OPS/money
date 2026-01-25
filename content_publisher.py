@@ -56,7 +56,7 @@ class WordPressPlatform(PublishingPlatform):
             'title': title,
             'content': html_content,
             'status': self.status,
-            'categories': [self._get_or_create_category(metadata.get('category', 'Uncategorized'))],
+            'categories': [self._get_default_category_id()],
         }
         
         # Add featured image if available
@@ -105,10 +105,13 @@ class WordPressPlatform(PublishingPlatform):
         
         return html
     
-    def _get_or_create_category(self, category_name: str) -> int:
-        """Get or create a category by name"""
-        # For simplicity, return 1 (Uncategorized). 
-        # In production, implement category lookup/creation
+    def _get_default_category_id(self) -> int:
+        """Get default category ID for WordPress posts
+        
+        Returns the default 'Uncategorized' category (ID: 1).
+        For production use, implement category lookup/creation via WordPress API.
+        """
+        # Return default category ID (Uncategorized)
         return 1
 
 
@@ -181,8 +184,21 @@ class GhostPlatform(PublishingPlatform):
         import jwt
         import time
         
-        # Split the key into ID and SECRET
-        id, secret = self.admin_api_key.split(':')
+        # Split the key into ID and SECRET with validation
+        if ':' not in self.admin_api_key:
+            raise ValueError("Ghost Admin API key must be in format 'id:secret'")
+        
+        parts = self.admin_api_key.split(':', 1)  # Split on first colon only
+        if len(parts) != 2 or not parts[0] or not parts[1]:
+            raise ValueError("Invalid Ghost Admin API key format. Expected 'id:secret'")
+        
+        id, secret = parts
+        
+        # Validate hex secret
+        try:
+            secret_bytes = bytes.fromhex(secret)
+        except ValueError as e:
+            raise ValueError(f"Ghost Admin API secret must be a valid hexadecimal string: {e}")
         
         # Prepare header and payload
         iat = int(time.time())
@@ -193,7 +209,7 @@ class GhostPlatform(PublishingPlatform):
             'aud': '/admin/'
         }
         
-        token = jwt.encode(payload, bytes.fromhex(secret), algorithm='HS256', headers=header)
+        token = jwt.encode(payload, secret_bytes, algorithm='HS256', headers=header)
         
         # Prepare post data
         post_data = {

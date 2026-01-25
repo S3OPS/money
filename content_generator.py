@@ -227,9 +227,16 @@ class AutomatedContentSystem:
         # Extract title from content (first line starting with #)
         title = "Generated Content"
         for line in content.split('\n'):
-            if line.startswith('#'):
-                title = line.lstrip('#').strip()
-                break
+            stripped = line.strip()
+            if stripped.startswith('#'):
+                # Remove all leading # characters and whitespace
+                title = stripped.lstrip('#').strip()
+                if title:  # Only use if we got a non-empty title
+                    break
+        
+        # Fallback to a descriptive title if extraction failed
+        if not title or title == "Generated Content":
+            title = f"{category} Products - {datetime.now().strftime('%B %d, %Y')}"
         
         # Generate metadata
         metadata = {
