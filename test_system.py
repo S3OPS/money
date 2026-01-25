@@ -5,10 +5,12 @@ Test script to validate the automated content creation system
 
 import os
 import sys
+import re
 import tempfile
 import shutil
 import traceback
 from pathlib import Path
+from urllib.parse import urlparse
 
 
 def test_imports():
@@ -67,11 +69,20 @@ def test_amazon_linker():
         # Test link generation
         link = linker.generate_link("B08N5WRWNW", "US")
         
-        if "amazon.com" in link and "test-id-20" in link:
-            print(f"   ✅ Generated link: {link}")
-            return True
-        else:
-            print(f"   ❌ Invalid link generated: {link}")
+        # More secure validation - check URL format properly
+        try:
+            parsed = urlparse(link)
+            is_amazon = parsed.netloc.endswith('amazon.com')
+            has_tag = "test-id-20" in link
+            
+            if is_amazon and has_tag:
+                print(f"   ✅ Generated link: {link}")
+                return True
+            else:
+                print(f"   ❌ Invalid link generated: {link}")
+                return False
+        except Exception as e:
+            print(f"   ❌ Link validation error: {e}")
             return False
             
     except Exception as e:
@@ -105,10 +116,25 @@ def test_content_generation():
             # Generate content
             content = generator.generate_content_post("Test Category")
             
-            if len(content) > 100 and "amazon.com" in content and "test-id-20" in content:
+            # Validate content - check for Amazon links more securely
+            # Find all URLs in content
+            url_pattern = r'https?://[^\s\)]+'
+            urls = re.findall(url_pattern, content)
+            
+            # Check if we have valid Amazon affiliate links
+            valid_amazon_links = 0
+            for url in urls:
+                try:
+                    parsed = urlparse(url)
+                    if parsed.netloc.endswith('amazon.com') and 'test-id-20' in url:
+                        valid_amazon_links += 1
+                except Exception:
+                    pass
+            
+            if len(content) > 100 and valid_amazon_links > 0:
                 print("   ✅ Content generated successfully")
                 print(f"   📊 Generated {len(content)} characters")
-                print(f"   🔗 Contains affiliate links: {content.count('amazon.com')}")
+                print(f"   🔗 Contains affiliate links: {valid_amazon_links}")
                 return True
             else:
                 print(f"   ❌ Invalid content generated")

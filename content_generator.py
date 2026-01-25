@@ -14,6 +14,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict
+from urllib.parse import urlparse
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -43,9 +44,18 @@ class AmazonAssociateLinker:
     
     def add_affiliate_tag(self, product_url: str) -> str:
         """Add affiliate tag to existing Amazon URL"""
-        if "amazon.com" in product_url or "amazon.co" in product_url:
-            separator = "&" if "?" in product_url else "?"
-            return f"{product_url}{separator}tag={self.tracking_id}"
+        # More secure URL validation - check if URL starts with Amazon domains
+        try:
+            parsed = urlparse(product_url)
+            # Check if domain is actually an Amazon domain
+            if parsed.netloc.endswith('amazon.com') or parsed.netloc.endswith('amazon.co.uk') or \
+               parsed.netloc.endswith('amazon.ca') or parsed.netloc.endswith('amazon.de') or \
+               parsed.netloc.endswith('amazon.fr') or parsed.netloc.endswith('amazon.co.jp'):
+                separator = "&" if "?" in product_url else "?"
+                return f"{product_url}{separator}tag={self.tracking_id}"
+        except Exception:
+            pass  # If URL parsing fails, return original
+        
         return product_url
 
 
