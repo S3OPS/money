@@ -9,9 +9,23 @@
 Generate high-quality product review content with embedded Amazon Associate affiliate links - fully automated with minimal setup required.
 
 > 🤖 **NEW:** Now with full CI/CD automation! See [AUTOMATION.md](AUTOMATION.md) for details.
+> 
+> 🚀 **QUICKEST SETUP:** Run `./scripts/complete-setup.sh` for fully automated configuration!
 
 ## 🚀 Quick Start (60 seconds!)
 
+### Option 1: Fully Automated (Recommended)
+```bash
+# 1. Clone and navigate
+cd money
+
+# 2. Run complete automated setup
+./scripts/complete-setup.sh
+
+# That's it! The script handles everything.
+```
+
+### Option 2: Manual Setup
 ```bash
 # 1. Clone and navigate
 cd money
@@ -25,6 +39,8 @@ python quick_start.py
 # 4. Generate content!
 python content_generator.py
 ```
+
+**For GitHub Actions automation setup, see [scripts/README.md](scripts/README.md)**
 
 That's it! Your content will be in the `generated_content/` folder.
 

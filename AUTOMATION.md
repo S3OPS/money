@@ -2,6 +2,25 @@
 
 This repository is now fully automated with GitHub Actions workflows! This guide explains all the automated processes and how to configure them.
 
+## 🚀 Quick Start - Fully Automated Setup
+
+**The fastest way to complete the entire setup:**
+
+```bash
+./scripts/complete-setup.sh
+```
+
+This single script will:
+- ✅ Verify dependencies
+- 🔐 Configure GitHub Secrets automatically
+- ⚙️  Set up local environment
+- 🧪 Run tests
+- 📊 Verify everything is ready
+
+**See [scripts/README.md](scripts/README.md) for detailed script documentation.**
+
+---
+
 ## 📋 Overview
 
 The automation system includes:
@@ -92,7 +111,27 @@ You need to add secrets in your repository settings for this to work:
 
 ### Setting Up Secrets
 
-To enable automated content generation and publishing:
+#### Option 1: Automated Setup (Recommended)
+
+Use the provided script to configure secrets automatically:
+
+```bash
+./scripts/setup-secrets.sh
+```
+
+This interactive script will:
+- ✅ Guide you through adding required secrets
+- 🔐 Securely configure credentials using GitHub CLI
+- ⚠️  Prompt before overwriting existing secrets
+- 📋 Show summary of configured secrets
+
+**Requirements:** GitHub CLI (`gh`) installed and authenticated
+- Install: `brew install gh` (macOS) or see [scripts/README.md](scripts/README.md)
+- Authenticate: `gh auth login`
+
+#### Option 2: Manual Setup
+
+To enable automated content generation and publishing manually:
 
 1. Navigate to your repository on GitHub
 2. Go to **Settings** → **Secrets and variables** → **Actions**
