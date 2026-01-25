@@ -1,0 +1,45 @@
+# Amazon Associate Configuration
+amazon:
+  associate_id: "YOUR_AMAZON_ASSOCIATE_ID"  # Replace with your actual Amazon Associate ID
+  tracking_id: "YOUR_TRACKING_ID-20"  # e.g., yoursite-20
+  api_region: "US"  # US, UK, CA, etc.
+
+# Content Generation Settings
+content:
+  categories:
+    - "Tech Gadgets"
+    - "Home & Kitchen"
+    - "Books"
+    - "Electronics"
+    - "Sports & Outdoors"
+  
+  # Number of products to feature per post
+  products_per_post: 5
+  
+  # Content generation frequency (in hours)
+  generation_interval: 24
+  
+  # Output settings
+  output_directory: "generated_content"
+  format: "markdown"  # markdown, html, or json
+
+# AI Content Generation (using free APIs or local generation)
+ai:
+  enabled: true
+  temperature: 0.7
+  max_tokens: 1000
+
+# Publishing Settings
+publishing:
+  auto_publish: false  # Set to true for automatic publishing
+  platforms:
+    - name: "blog"
+      enabled: true
+    - name: "social_media"
+      enabled: false
+
+# Scheduling
+schedule:
+  enabled: true
+  time: "09:00"  # Daily at 9 AM
+  timezone: "UTC"

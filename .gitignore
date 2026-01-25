@@ -1,0 +1,17 @@
+generated_content/
+*.pyc
+__pycache__/
+.env
+*.log
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.pytest_cache/
+htmlcov/
+.coverage
+dist/
+build/
+*.egg-info/
