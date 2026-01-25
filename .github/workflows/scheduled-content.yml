@@ -1,0 +1,89 @@
+name: Scheduled Content Generation
+
+on:
+  schedule:
+    # Run daily at 9 AM UTC (matches config.yaml default)
+    - cron: '0 9 * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  generate-content:
+    name: Generate Content
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Configure environment
+      env:
+        AMAZON_ASSOCIATE_ID: ${{ secrets.AMAZON_ASSOCIATE_ID }}
+        AMAZON_TRACKING_ID: ${{ secrets.AMAZON_TRACKING_ID }}
+        WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
+        WORDPRESS_APP_PASSWORD: ${{ secrets.WORDPRESS_APP_PASSWORD }}
+        MEDIUM_INTEGRATION_TOKEN: ${{ secrets.MEDIUM_INTEGRATION_TOKEN }}
+        GHOST_ADMIN_API_KEY: ${{ secrets.GHOST_ADMIN_API_KEY }}
+        WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+      run: |
+        # Create .env file from secrets
+        echo "AMAZON_ASSOCIATE_ID=${AMAZON_ASSOCIATE_ID}" > .env
+        echo "AMAZON_TRACKING_ID=${AMAZON_TRACKING_ID}" >> .env
+        
+        # Add publishing credentials if available
+        if [ -n "${WORDPRESS_USERNAME}" ]; then
+          echo "WORDPRESS_USERNAME=${WORDPRESS_USERNAME}" >> .env
+          echo "WORDPRESS_APP_PASSWORD=${WORDPRESS_APP_PASSWORD}" >> .env
+        fi
+        
+        if [ -n "${MEDIUM_INTEGRATION_TOKEN}" ]; then
+          echo "MEDIUM_INTEGRATION_TOKEN=${MEDIUM_INTEGRATION_TOKEN}" >> .env
+        fi
+        
+        if [ -n "${GHOST_ADMIN_API_KEY}" ]; then
+          echo "GHOST_ADMIN_API_KEY=${GHOST_ADMIN_API_KEY}" >> .env
+        fi
+        
+        if [ -n "${WEBHOOK_URL}" ]; then
+          echo "WEBHOOK_URL=${WEBHOOK_URL}" >> .env
+        fi
+    
+    - name: Generate content
+      run: |
+        python content_generator.py
+    
+    - name: Upload generated content
+      uses: actions/upload-artifact@v4
+      with:
+        name: generated-content-${{ github.run_number }}
+        path: generated_content/
+        retention-days: 30
+    
+    - name: Create summary
+      if: always()
+      run: |
+        echo "## Content Generation Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Run Number:** ${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Timestamp:** $(date -u +'%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -d "generated_content" ]; then
+          file_count=$(find generated_content -type f | wc -l)
+          echo "- **Files Generated:** $file_count" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Generated Files:" >> $GITHUB_STEP_SUMMARY
+          ls -lh generated_content/ >> $GITHUB_STEP_SUMMARY || true
+        else
+          echo "- **Status:** No content directory found" >> $GITHUB_STEP_SUMMARY
+        fi
