@@ -176,7 +176,7 @@ def test_file_saving():
             content = generator.generate_content_post("Test")
             filepath = generator.save_content(content, "test_output.md")
             
-            if filepath.exists() and filepath.read_text() == content:
+            if filepath.exists() and filepath.read_text(encoding='utf-8') == content:
                 print(f"   ✅ File saved successfully: {filepath}")
                 return True
             else:
