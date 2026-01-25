@@ -10,6 +10,9 @@ jobs:
   generate-content:
     name: Generate Content
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
     
     steps:
     - name: Checkout code
@@ -26,7 +29,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
-    - name: Configure environment
+    - name: Generate content
       env:
         AMAZON_ASSOCIATE_ID: ${{ secrets.AMAZON_ASSOCIATE_ID }}
         AMAZON_TRACKING_ID: ${{ secrets.AMAZON_TRACKING_ID }}
@@ -36,31 +39,13 @@ jobs:
         GHOST_ADMIN_API_KEY: ${{ secrets.GHOST_ADMIN_API_KEY }}
         WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
       run: |
-        # Create .env file from secrets
-        echo "AMAZON_ASSOCIATE_ID=${AMAZON_ASSOCIATE_ID}" > .env
-        echo "AMAZON_TRACKING_ID=${AMAZON_TRACKING_ID}" >> .env
-        
-        # Add publishing credentials if available
-        if [ -n "${WORDPRESS_USERNAME}" ]; then
-          echo "WORDPRESS_USERNAME=${WORDPRESS_USERNAME}" >> .env
-          echo "WORDPRESS_APP_PASSWORD=${WORDPRESS_APP_PASSWORD}" >> .env
+        echo "🚀 Starting content generation..."
+        if python content_generator.py; then
+          echo "✅ Content generation completed successfully"
+        else
+          echo "❌ Content generation failed with exit code $?"
+          exit 1
         fi
-        
-        if [ -n "${MEDIUM_INTEGRATION_TOKEN}" ]; then
-          echo "MEDIUM_INTEGRATION_TOKEN=${MEDIUM_INTEGRATION_TOKEN}" >> .env
-        fi
-        
-        if [ -n "${GHOST_ADMIN_API_KEY}" ]; then
-          echo "GHOST_ADMIN_API_KEY=${GHOST_ADMIN_API_KEY}" >> .env
-        fi
-        
-        if [ -n "${WEBHOOK_URL}" ]; then
-          echo "WEBHOOK_URL=${WEBHOOK_URL}" >> .env
-        fi
-    
-    - name: Generate content
-      run: |
-        python content_generator.py
     
     - name: Upload generated content
       uses: actions/upload-artifact@v4

@@ -120,6 +120,11 @@ schedule:
 - `0 0 * * *` - Daily at midnight UTC
 - `0 9 * * 1,3,5` - Monday, Wednesday, Friday at 9 AM UTC
 
+**Important Notes:**
+- ⚠️ GitHub Actions scheduled workflows have a minimum 5-minute interval
+- ⚠️ Scheduled workflows may experience delays during high load times
+- ⚠️ Workflows won't run if the repository has had no activity for 60 days
+
 ### Enabling/Disabling Auto-Publishing
 
 Edit `config.yaml` to control publishing:

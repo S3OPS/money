@@ -167,11 +167,15 @@ jobs:
     
     - name: Check required files
       run: |
-        required_files=("README.md" "requirements.txt" "content_generator.py" "content_publisher.py" "test_system.py")
-        for file in "${required_files[@]}"; do
+        # Read required files from configuration
+        while IFS= read -r file; do
+          # Skip comments and empty lines
+          [[ "$file" =~ ^#.*$ ]] && continue
+          [[ -z "$file" ]] && continue
+          
           if [ ! -f "$file" ]; then
             echo "❌ Missing required file: $file"
             exit 1
           fi
-        done
+        done < .github/required-files.txt
         echo "✅ All required files present"
