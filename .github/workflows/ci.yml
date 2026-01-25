@@ -31,13 +31,11 @@ jobs:
         pip install -r requirements.txt
     
     - name: Set up test environment
+      env:
+        AMAZON_ASSOCIATE_ID: test-id
+        AMAZON_TRACKING_ID: test-id-20
       run: |
-        cp .env.example .env
-        echo "AMAZON_ASSOCIATE_ID=test-id" >> .env
-        echo "AMAZON_TRACKING_ID=test-id-20" >> .env
-    
-    - name: Run system tests
-      run: |
+        # Tests will use environment variables directly
         python test_system.py
     
     - name: Upload test results
@@ -166,6 +164,7 @@ jobs:
         echo "✅ .env.example exists"
     
     - name: Check required files
+      shell: bash
       run: |
         # Read required files from configuration
         while IFS= read -r file; do

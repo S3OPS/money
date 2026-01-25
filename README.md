@@ -284,7 +284,7 @@ This repository now includes comprehensive GitHub Actions automation!
 
 1. ✅ Set up your Amazon Associate ID
 2. ✅ Generate your first content
-3. 🤖 **Configure GitHub Actions automation** (see [AUTOMATION.md](AUTOMATION.md))
+3. 🤖 Configure GitHub Actions automation (see [AUTOMATION.md](AUTOMATION.md))
 4. 📝 Customize templates to match your style
 5. 🚀 Set up automated scheduling
 6. 📊 Track your earnings in Amazon Associates dashboard
