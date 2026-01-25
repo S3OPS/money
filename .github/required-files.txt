@@ -1,0 +1,9 @@
+# Required files for validation in CI
+# This list is used by .github/workflows/ci.yml
+README.md
+requirements.txt
+content_generator.py
+content_publisher.py
+test_system.py
+config.yaml
+.env.example

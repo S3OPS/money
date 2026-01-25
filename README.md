@@ -1,11 +1,31 @@
 # 💰 Automated Content Creation System with Amazon Associates
 
+[![CI](https://github.com/S3OPS/money/actions/workflows/ci.yml/badge.svg)](https://github.com/S3OPS/money/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/S3OPS/money/actions/workflows/codeql.yml/badge.svg)](https://github.com/S3OPS/money/actions/workflows/codeql.yml)
+[![Scheduled Content](https://github.com/S3OPS/money/actions/workflows/scheduled-content.yml/badge.svg)](https://github.com/S3OPS/money/actions/workflows/scheduled-content.yml)
+
 **The world's fastest automated content generation system for Amazon affiliate marketing!**
 
 Generate high-quality product review content with embedded Amazon Associate affiliate links - fully automated with minimal setup required.
 
+> 🤖 **NEW:** Now with full CI/CD automation! See [AUTOMATION.md](AUTOMATION.md) for details.
+> 
+> 🚀 **QUICKEST SETUP:** Run `./scripts/complete-setup.sh` for fully automated configuration!
+
 ## 🚀 Quick Start (60 seconds!)
 
+### Option 1: Fully Automated (Recommended)
+```bash
+# 1. Clone and navigate
+cd money
+
+# 2. Run complete automated setup
+./scripts/complete-setup.sh
+
+# That's it! The script handles everything.
+```
+
+### Option 2: Manual Setup
 ```bash
 # 1. Clone and navigate
 cd money
@@ -20,6 +40,8 @@ python quick_start.py
 python content_generator.py
 ```
 
+**For GitHub Actions automation setup, see [scripts/README.md](scripts/README.md)**
+
 That's it! Your content will be in the `generated_content/` folder.
 
 ## ✨ Features
@@ -28,10 +50,12 @@ That's it! Your content will be in the `generated_content/` folder.
 - 💵 **Amazon Associates Ready**: Automatic affiliate link insertion
 - 📤 **Auto-Publishing**: Automatically post to WordPress, Medium, Ghost, or custom platforms
 - 📅 **Scheduled Generation**: Set it and forget it with automated scheduling
+- 🤖 **Full CI/CD Automation**: GitHub Actions workflows for testing, security, and scheduled content generation
 - 📝 **Multiple Formats**: Markdown, HTML, or JSON output
 - 🎯 **Multi-Category**: Tech, Home, Books, Electronics, and more
 - 🔒 **Secure**: Environment variables for sensitive data
 - 📊 **Analytics**: Automatic metadata tracking
+- 🛡️ **Security Scanning**: Automated CodeQL analysis and dependency vulnerability checks
 
 ## 📋 Requirements
 
@@ -255,15 +279,33 @@ This project is provided as-is for educational and commercial use.
 - Follow FTC guidelines for affiliate link disclosure
 - Product information should be verified before publishing
 
+## 🤖 Full Automation (NEW!)
+
+This repository now includes comprehensive GitHub Actions automation! 
+
+**Automated Workflows:**
+- ✅ **Continuous Integration** - Tests run on every push/PR (Python 3.8-3.11)
+- 🔒 **Security Scanning** - CodeQL analysis and dependency checks
+- 📅 **Scheduled Content** - Automatic daily content generation at 9 AM UTC
+- 🛡️ **Dependency Review** - Automated vulnerability scanning on PRs
+
+**Setup Instructions:**
+1. Add GitHub Secrets for your Amazon Associate credentials
+2. Enable workflows in the Actions tab
+3. Configure schedule in `.github/workflows/scheduled-content.yml`
+
+📖 **Full documentation:** See [AUTOMATION.md](AUTOMATION.md) for complete setup guide
+
 ## 🎯 What's Next?
 
 1. ✅ Set up your Amazon Associate ID
 2. ✅ Generate your first content
-3. 📝 Customize templates to match your style
-4. 🚀 Set up automated scheduling
-5. 📊 Track your earnings in Amazon Associates dashboard
-6. 🎨 Integrate with your blog/website
-7. 💰 Start earning commissions!
+3. 🤖 Configure GitHub Actions automation (see [AUTOMATION.md](AUTOMATION.md))
+4. 📝 Customize templates to match your style
+5. 🚀 Set up automated scheduling
+6. 📊 Track your earnings in Amazon Associates dashboard
+7. 🎨 Integrate with your blog/website
+8. 💰 Start earning commissions!
 
 ## 📞 Support
 
