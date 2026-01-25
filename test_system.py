@@ -72,7 +72,8 @@ def test_amazon_linker():
         # More secure validation - check URL format properly
         try:
             parsed = urlparse(link)
-            is_amazon = parsed.netloc.endswith('amazon.com')
+            # Use exact domain matching instead of substring check
+            is_amazon = parsed.netloc in {'www.amazon.com', 'amazon.com'}
             has_tag = "test-id-20" in link
             
             if is_amazon and has_tag:
@@ -122,11 +123,12 @@ def test_content_generation():
             urls = re.findall(url_pattern, content)
             
             # Check if we have valid Amazon affiliate links
+            amazon_domains = {'www.amazon.com', 'amazon.com'}
             valid_amazon_links = 0
             for url in urls:
                 try:
                     parsed = urlparse(url)
-                    if parsed.netloc.endswith('amazon.com') and 'test-id-20' in url:
+                    if parsed.netloc in amazon_domains and 'test-id-20' in url:
                         valid_amazon_links += 1
                 except Exception:
                     pass

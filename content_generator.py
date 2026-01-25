@@ -44,13 +44,20 @@ class AmazonAssociateLinker:
     
     def add_affiliate_tag(self, product_url: str) -> str:
         """Add affiliate tag to existing Amazon URL"""
-        # More secure URL validation - check if URL starts with Amazon domains
+        # More secure URL validation - check if URL is from Amazon domains
         try:
             parsed = urlparse(product_url)
-            # Check if domain is actually an Amazon domain
-            if parsed.netloc.endswith('amazon.com') or parsed.netloc.endswith('amazon.co.uk') or \
-               parsed.netloc.endswith('amazon.ca') or parsed.netloc.endswith('amazon.de') or \
-               parsed.netloc.endswith('amazon.fr') or parsed.netloc.endswith('amazon.co.jp'):
+            # Explicitly check for exact Amazon domain matches
+            amazon_domains = {
+                'www.amazon.com', 'amazon.com',
+                'www.amazon.co.uk', 'amazon.co.uk',
+                'www.amazon.ca', 'amazon.ca',
+                'www.amazon.de', 'amazon.de',
+                'www.amazon.fr', 'amazon.fr',
+                'www.amazon.co.jp', 'amazon.co.jp'
+            }
+            
+            if parsed.netloc in amazon_domains:
                 separator = "&" if "?" in product_url else "?"
                 return f"{product_url}{separator}tag={self.tracking_id}"
         except Exception:
