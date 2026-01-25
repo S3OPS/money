@@ -212,6 +212,9 @@ def test_system_integration():
         # Use temp directory for output
         config['content']['output_directory'] = tempfile.mkdtemp()
         
+        # Disable auto-publishing for tests
+        config['publishing']['auto_publish'] = False
+        
         try:
             yaml.dump(config, temp_config)
             temp_config.close()
@@ -242,6 +245,37 @@ def test_system_integration():
         return False
 
 
+def test_publisher_initialization():
+    """Test content publisher initialization"""
+    print("🧪 Testing content publisher...")
+    
+    try:
+        from content_publisher import ContentPublisher
+        import yaml
+        
+        with open('config.yaml', 'r') as f:
+            config = yaml.safe_load(f)
+        
+        # Initialize publisher
+        publisher = ContentPublisher(config)
+        
+        # Should initialize without errors
+        print(f"   ✅ Publisher initialized successfully")
+        
+        # Check for enabled platforms
+        if publisher.has_enabled_platforms():
+            print(f"   📤 Enabled platforms: {', '.join(publisher.get_enabled_platform_names())}")
+        else:
+            print(f"   ℹ️  No publishing platforms enabled (this is OK for testing)")
+        
+        return True
+            
+    except Exception as e:
+        print(f"   ❌ Publisher initialization error: {e}")
+        traceback.print_exc()
+        return False
+
+
 def main():
     """Run all tests"""
     print("=" * 60)
@@ -255,6 +289,7 @@ def main():
         ("Amazon Link Generator", test_amazon_linker),
         ("Content Generation", test_content_generation),
         ("File Saving", test_file_saving),
+        ("Content Publisher", test_publisher_initialization),
         ("System Integration", test_system_integration),
     ]
     

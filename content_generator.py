@@ -17,6 +17,9 @@ from typing import List, Dict
 from urllib.parse import urlparse
 from dotenv import load_dotenv
 
+# Import content publisher
+from content_publisher import ContentPublisher
+
 # Load environment variables
 load_dotenv()
 
@@ -205,6 +208,7 @@ class AutomatedContentSystem:
             self.config = yaml.safe_load(f)
         
         self.generator = ContentGenerator(self.config)
+        self.publisher = ContentPublisher(self.config)
     
     def generate_and_save(self) -> Dict:
         """Generate content and save to file"""
@@ -219,6 +223,13 @@ class AutomatedContentSystem:
         # Save content
         filepath = self.generator.save_content(content)
         print(f"✅ Content saved to: {filepath}")
+        
+        # Extract title from content (first line starting with #)
+        title = "Generated Content"
+        for line in content.split('\n'):
+            if line.startswith('#'):
+                title = line.lstrip('#').strip()
+                break
         
         # Generate metadata
         metadata = {
@@ -236,6 +247,39 @@ class AutomatedContentSystem:
         
         print(f"📊 Metadata saved to: {metadata_path}")
         print(f"📈 Generated {metadata['word_count']} words with {metadata['affiliate_links']} affiliate links")
+        
+        # Auto-publish if enabled
+        if self.config.get('publishing', {}).get('auto_publish', False):
+            print("\n" + "=" * 60)
+            print("📢 AUTO-PUBLISHING ENABLED")
+            print("=" * 60)
+            
+            if self.publisher.has_enabled_platforms():
+                print(f"🎯 Publishing to: {', '.join(self.publisher.get_enabled_platform_names())}")
+                print()
+                
+                publish_results = self.publisher.publish_content(title, content, metadata)
+                
+                # Add publishing results to metadata
+                metadata['published'] = True
+                metadata['publishing_results'] = publish_results
+                
+                # Update metadata file
+                with open(metadata_path, 'w') as f:
+                    json.dump(metadata, f, indent=2)
+                
+                # Summary
+                successful = sum(1 for r in publish_results if r.get('success', False))
+                total = len(publish_results)
+                print()
+                print("=" * 60)
+                print(f"📊 PUBLISHING SUMMARY: {successful}/{total} successful")
+                print("=" * 60)
+            else:
+                print("⚠️  No publishing platforms enabled in config.yaml")
+                print("   Enable platforms to auto-publish content")
+        else:
+            print("\n💡 Tip: Enable auto_publish in config.yaml to automatically post content")
         
         return metadata
     

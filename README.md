@@ -26,6 +26,7 @@ That's it! Your content will be in the `generated_content/` folder.
 
 - 🤖 **Fully Automated**: Generate content with a single command
 - 💵 **Amazon Associates Ready**: Automatic affiliate link insertion
+- 📤 **Auto-Publishing**: Automatically post to WordPress, Medium, Ghost, or custom platforms
 - 📅 **Scheduled Generation**: Set it and forget it with automated scheduling
 - 📝 **Multiple Formats**: Markdown, HTML, or JSON output
 - 🎯 **Multi-Category**: Tech, Home, Books, Electronics, and more
@@ -81,6 +82,32 @@ Edit `config.yaml` to customize:
 - **Generation interval**: How often to create new content
 - **Output format**: Markdown, HTML, or JSON
 - **Scheduling**: Enable automated daily generation
+- **Auto-Publishing**: Enable automatic posting to WordPress, Medium, Ghost, etc.
+
+### Set Up Auto-Publishing (Optional)
+
+Want to automatically publish your generated content? See the [**Publishing Guide**](PUBLISHING.md) for detailed setup instructions for:
+
+- 📝 WordPress
+- 📰 Medium
+- 👻 Ghost CMS
+- 🔗 Custom Webhooks
+
+Quick setup:
+
+1. Configure your platform credentials in `.env`
+2. Enable auto-publishing in `config.yaml`:
+
+```yaml
+publishing:
+  auto_publish: true
+  platforms:
+    - type: "wordpress"
+      enabled: true
+      status: "draft"  # or "publish"
+```
+
+3. Run the generator - content will be posted automatically!
 
 ## 🎯 Usage
 
@@ -126,6 +153,8 @@ is an excellent choice that delivers outstanding value.
 ---
 ```
 
+**Plus:** Content is automatically published to your configured platforms (WordPress, Medium, Ghost, etc.) if auto-publishing is enabled!
+
 ## 🔄 How It Works
 
 1. **Content Generation**: Creates product review articles
@@ -133,6 +162,7 @@ is an excellent choice that delivers outstanding value.
 3. **Multiple Products**: Features multiple products per article
 4. **Professional Format**: Clean, readable markdown/HTML output
 5. **Metadata Tracking**: Tracks generated content for analytics
+6. **Auto-Publishing**: Optionally publishes to your blog/platform automatically
 
 ## 🎨 Customization
 
@@ -172,10 +202,15 @@ content:
 ### Integration with Publishing Platforms
 
 The system is designed to integrate with:
-- WordPress blogs (via API)
+- WordPress blogs (via REST API) ✅ **Now automated!**
+- Medium (via API) ✅ **Now automated!**
+- Ghost CMS (via Admin API) ✅ **Now automated!**
+- Custom platforms (via webhooks) ✅ **Now automated!**
 - Static site generators (Jekyll, Hugo, etc.)
 - Social media platforms
 - Email newsletters
+
+See [PUBLISHING.md](PUBLISHING.md) for setup instructions.
 
 ### API Integration
 

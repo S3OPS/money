@@ -33,10 +33,34 @@ ai:
 publishing:
   auto_publish: false  # Set to true for automatic publishing
   platforms:
-    - name: "blog"
-      enabled: true
-    - name: "social_media"
+    # WordPress Integration
+    - type: "wordpress"
       enabled: false
+      site_url: "https://yoursite.com"  # Your WordPress site URL
+      username: ""  # Leave empty to use .env
+      app_password: ""  # Leave empty to use .env
+      status: "draft"  # Options: draft, publish, private
+    
+    # Medium Integration
+    - type: "medium"
+      enabled: false
+      integration_token: ""  # Leave empty to use .env
+      publish_status: "draft"  # Options: draft, public, unlisted
+    
+    # Ghost CMS Integration
+    - type: "ghost"
+      enabled: false
+      api_url: "https://yoursite.com"  # Your Ghost site URL
+      admin_api_key: ""  # Leave empty to use .env (format: id:secret)
+      status: "draft"  # Options: draft, published
+    
+    # Generic Webhook (for custom integrations)
+    - type: "webhook"
+      enabled: false
+      webhook_url: ""  # Leave empty to use .env
+      method: "POST"  # POST or PUT
+      headers:
+        Content-Type: "application/json"
 
 # Scheduling
 schedule:
