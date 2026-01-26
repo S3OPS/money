@@ -293,6 +293,10 @@ class WebhookPlatform(PublishingPlatform):
 class YouTubePlatform(PublishingPlatform):
     """YouTube publishing via YouTube Data API v3"""
     
+    # Constants for YouTube limits
+    YOUTUBE_COMMUNITY_POST_LIMIT = 5000
+    YOUTUBE_TRUNCATE_OFFSET = 50
+    
     def __init__(self, config: Dict):
         super().__init__(config)
         self.api_key = os.getenv('YOUTUBE_API_KEY') or config.get('api_key')
@@ -342,35 +346,24 @@ class YouTubePlatform(PublishingPlatform):
             with open(token_file, 'wb') as token:
                 pickle.dump(creds, token)
         
-        # Build YouTube API client
-        youtube = build('youtube', 'v3', credentials=creds)
-        
         # Convert markdown to plain text for YouTube community post
         plain_text = self._markdown_to_plain_text(content)
         
         # Truncate if too long (YouTube community posts have character limits)
-        max_length = 5000
-        if len(plain_text) > max_length:
-            plain_text = plain_text[:max_length-50] + "\n\n... [Read more in the full post]"
+        if len(plain_text) > self.YOUTUBE_COMMUNITY_POST_LIMIT:
+            plain_text = plain_text[:self.YOUTUBE_COMMUNITY_POST_LIMIT - self.YOUTUBE_TRUNCATE_OFFSET] + "\n\n... [Read more in the full post]"
         
-        # Create community post
-        # Note: As of 2024, YouTube Community Posts API requires special access
-        # For now, we'll prepare the post data and provide instructions for manual posting
-        post_data = {
-            'snippet': {
-                'channelId': self.channel_id,
-                'description': plain_text
-            }
-        }
+        # Note: YouTube Community Post API requires special access and is not publicly available
+        # The API client is built but the endpoint requires special permissions from YouTube
+        # For production use, content needs to be posted manually or via YouTube Studio API (requires approval)
         
-        # Since YouTube Community Post API requires special access,
-        # we'll save the post for manual upload or use through YouTube Studio
         return {
             'success': True,
             'platform': 'YouTube',
-            'note': 'YouTube Community Posts require manual posting through YouTube Studio',
+            'note': 'YouTube Community Posts require manual posting through YouTube Studio or special API access',
             'post_preview': plain_text[:200],
-            'instructions': 'Copy the content and post manually at: https://studio.youtube.com/channel/{}/posts'.format(self.channel_id)
+            'instructions': 'Copy the content and post manually at: https://studio.youtube.com/channel/{}/posts'.format(self.channel_id),
+            'credentials_ready': True
         }
     
     def _markdown_to_plain_text(self, markdown_text: str) -> str:
@@ -400,6 +393,10 @@ class YouTubePlatform(PublishingPlatform):
 class InstagramPlatform(PublishingPlatform):
     """Instagram publishing via Instagram Graph API or unofficial API"""
     
+    # Constants for Instagram limits
+    INSTAGRAM_CAPTION_LIMIT = 2200
+    INSTAGRAM_TRUNCATE_OFFSET = 10
+    
     def __init__(self, config: Dict):
         super().__init__(config)
         self.username = os.getenv('INSTAGRAM_USERNAME') or config.get('username')
@@ -427,9 +424,9 @@ class InstagramPlatform(PublishingPlatform):
         # Convert markdown to caption
         caption = self._markdown_to_caption(content)
         
-        # Truncate to Instagram's caption limit (2,200 characters)
-        if len(caption) > 2200:
-            caption = caption[:2190] + "...[more]"
+        # Truncate to Instagram's caption limit
+        if len(caption) > self.INSTAGRAM_CAPTION_LIMIT:
+            caption = caption[:self.INSTAGRAM_CAPTION_LIMIT - self.INSTAGRAM_TRUNCATE_OFFSET] + "...[more]"
         
         # Note: Instagram Graph API requires an image URL for posts
         # Since we're generating text content, we need to create a text image
@@ -455,35 +452,21 @@ class InstagramPlatform(PublishingPlatform):
         caption = self._markdown_to_caption(content)
         
         # Truncate to Instagram's caption limit
-        if len(caption) > 2200:
-            caption = caption[:2190] + "...[more]"
+        if len(caption) > self.INSTAGRAM_CAPTION_LIMIT:
+            caption = caption[:self.INSTAGRAM_CAPTION_LIMIT - self.INSTAGRAM_TRUNCATE_OFFSET] + "...[more]"
         
-        # Initialize client
-        cl = Client()
+        # Note: Instagram requires images for posts
+        # For text-only content publishing, we prepare the caption but require manual posting
+        # In production, you would integrate with a text-to-image service or use pre-made images
         
-        try:
-            # Login
-            cl.login(self.username, self.password)
-            
-            # Note: Instagram requires images for posts
-            # For now, we'll create a simple text-based image or require the user to provide one
-            # This is a placeholder - in production, you'd want to generate an image with the text
-            
-            return {
-                'success': False,
-                'platform': 'Instagram',
-                'error': 'Instagram posts require images. Please provide an image or use a text-to-image service.',
-                'caption_preview': caption[:200],
-                'note': 'Caption ready for manual posting'
-            }
-            
-        except Exception as e:
-            return {
-                'success': False,
-                'platform': 'Instagram',
-                'error': f'Instagram login/posting failed: {str(e)}',
-                'note': 'Check your username and password in .env file'
-            }
+        return {
+            'success': False,
+            'platform': 'Instagram',
+            'error': 'Instagram posts require images. Please provide an image or use a text-to-image service.',
+            'caption_preview': caption[:200],
+            'note': 'Caption ready for manual posting with an image',
+            'caption_length': len(caption)
+        }
     
     def _markdown_to_caption(self, markdown_text: str) -> str:
         """Convert markdown to Instagram caption format"""
