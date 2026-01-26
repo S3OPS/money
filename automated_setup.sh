@@ -56,7 +56,7 @@ while [[ $# -gt 0 ]]; do
             echo ""
             echo "Options:"
             echo "  --amazon-id ID          Amazon Associate ID (required)"
-            echo "  --tracking-id ID        Amazon Tracking ID (default: AMAZON_ID)"
+            echo "  --tracking-id ID        Amazon Tracking ID (default: same as amazon-id)"
             echo "  --openai-key KEY        OpenAI API key (optional)"
             echo "  --skip-tests            Skip running tests"
             echo "  --skip-generation       Skip initial content generation"
@@ -192,7 +192,9 @@ if [ "$SKIP_TESTS" = false ]; then
     echo "Step 4: Running System Tests"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     
-    if python3 test_system.py; then
+    if [ ! -f "test_system.py" ]; then
+        echo "⚠️  test_system.py not found, skipping tests"
+    elif python3 test_system.py; then
         echo "✅ All tests passed"
     else
         echo "⚠️  Some tests failed (may be OK if optional features aren't configured)"
@@ -209,7 +211,11 @@ if [ "$SKIP_GENERATION" = false ]; then
     echo "Step 5: Generating Initial Content"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     
-    if python3 content_generator.py; then
+    if [ ! -f "content_generator.py" ]; then
+        echo "❌ content_generator.py not found!"
+        echo "   Please ensure you're running this script from the repository root."
+        exit 1
+    elif python3 content_generator.py; then
         echo "✅ Content generated successfully"
         echo "📁 Check the 'generated_content/' folder"
     else

@@ -41,6 +41,8 @@ def setup_config(amazon_id=None, tracking_id=None, openai_key=None):
     if not os.path.exists('.env') or amazon_id:
         if amazon_id:
             # Create .env with provided credentials
+            # Note: Tracking ID defaults to Amazon ID. Many users use the same value for both,
+            # though Amazon IDs can have suffixes like '-20'. Users can customize via --tracking-id.
             tracking_id = tracking_id or amazon_id
             openai_key = openai_key or "optional-for-ai-content"
             
