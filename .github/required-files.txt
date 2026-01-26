@@ -7,3 +7,6 @@ content_publisher.py
 test_system.py
 config.yaml
 .env.example
+setup_youtube.py
+PUBLISHING.md
+YOUTUBE_SETUP.md

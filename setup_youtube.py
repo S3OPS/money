@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 """
-YouTube and Instagram Setup Script
-One-command automated configuration for YouTube and Instagram credentials
+YouTube Setup Script
+One-command automated configuration for YouTube credentials
 """
 
 import os
 import sys
-import getpass
 import subprocess
 from pathlib import Path
 
@@ -14,10 +13,10 @@ from pathlib import Path
 def print_header():
     """Print setup header"""
     print("=" * 80)
-    print("🎥 YOUTUBE & INSTAGRAM AUTOMATED SETUP")
+    print("🎥 YOUTUBE AUTOMATED SETUP")
     print("=" * 80)
     print()
-    print("This script will help you configure YouTube and Instagram publishing.")
+    print("This script will help you configure YouTube publishing.")
     print("Your credentials will be stored securely in the .env file.")
     print()
 
@@ -166,78 +165,8 @@ def setup_youtube():
     return channel_id, creds_file
 
 
-def setup_instagram():
-    """Setup Instagram credentials"""
-    print_section("Instagram Setup")
-    
-    print("📸 Instagram can be configured in two ways:")
-    print()
-    print("Option 1: Personal Account (Recommended)")
-    print("   • Uses your Instagram username and password")
-    print("   • Simpler setup")
-    print("   • Good for most users")
-    print()
-    print("Option 2: Business Account")
-    print("   • Uses Instagram Graph API")
-    print("   • Requires Facebook Page connected to Instagram")
-    print("   • More complex setup")
-    print()
-    
-    setup_ig = input("Do you want to configure Instagram now? (y/n): ").strip().lower()
-    if setup_ig != 'y':
-        print("⏭️  Skipping Instagram setup")
-        return None
-    
-    print()
-    account_type = input("Choose account type (1=Personal, 2=Business): ").strip()
-    
-    if account_type == '2':
-        print()
-        print("📊 Business Account Setup")
-        print("   You'll need:")
-        print("   • Instagram Business Account ID")
-        print("   • Facebook Access Token")
-        print()
-        
-        business_id = input("Enter Instagram Business Account ID: ").strip()
-        access_token = getpass.getpass("Enter Facebook Access Token (hidden): ").strip()
-        
-        if business_id and access_token:
-            print("✅ Instagram Business Account configured")
-            return {
-                'type': 'business',
-                'business_id': business_id,
-                'access_token': access_token
-            }
-        else:
-            print("⚠️  Missing credentials, skipping Instagram setup")
-            return None
-    
-    else:
-        print()
-        print("👤 Personal Account Setup")
-        username = input("Enter your Instagram username: ").strip()
-        
-        if not username:
-            print("⚠️  Username is required!")
-            return None
-        
-        password = getpass.getpass("Enter your Instagram password (hidden): ").strip()
-        
-        if not password:
-            print("⚠️  Password is required!")
-            return None
-        
-        print("✅ Instagram Personal Account configured")
-        return {
-            'type': 'personal',
-            'username': username,
-            'password': password
-        }
-
-
 def update_config_yaml():
-    """Update config.yaml to enable YouTube and Instagram"""
+    """Update config.yaml to enable YouTube"""
     config_file = Path("config.yaml")
     
     if not config_file.exists():
@@ -245,7 +174,7 @@ def update_config_yaml():
         return
     
     print()
-    print("⚙️  Updating config.yaml to enable YouTube and Instagram...")
+    print("⚙️  Updating config.yaml to enable YouTube...")
     
     try:
         import yaml
@@ -305,7 +234,7 @@ def test_configuration():
         print(f"⚠️  Could not run tests: {e}")
 
 
-def print_next_steps(yt_configured, ig_configured):
+def print_next_steps(yt_configured):
     """Print next steps"""
     print()
     print("=" * 80)
@@ -318,11 +247,6 @@ def print_next_steps(yt_configured, ig_configured):
     else:
         print("   ⏭️  YouTube setup skipped")
     
-    if ig_configured:
-        print("   ✅ Instagram credentials added to .env")
-    else:
-        print("   ⏭️  Instagram setup skipped")
-    
     print()
     print("🎯 Next Steps:")
     print()
@@ -333,18 +257,12 @@ def print_next_steps(yt_configured, ig_configured):
         print("   • Run the generator - first time will open browser for OAuth")
         print()
     
-    if ig_configured:
-        print("2. 📸 Instagram:")
-        print("   • Add product images (Instagram requires images)")
-        print("   • System will prepare captions for you")
-        print()
-    
-    print("3. 🚀 Generate Content:")
+    print("2. 🚀 Generate Content:")
     print("   python content_generator.py")
     print()
     
-    print("4. 📖 Documentation:")
-    print("   • Quick guide: YOUTUBE_INSTAGRAM_SETUP.md")
+    print("3. 📖 Documentation:")
+    print("   • Quick guide: YOUTUBE_SETUP.md")
     print("   • Full guide: PUBLISHING.md")
     print("   • Main README: README.md")
     print()
@@ -375,16 +293,6 @@ def main():
         env_content = update_env_value(env_content, "YOUTUBE_CHANNEL_ID", yt_channel_id)
         env_content = update_env_value(env_content, "YOUTUBE_CREDENTIALS_FILE", yt_creds_file)
     
-    # Setup Instagram
-    ig_config = setup_instagram()
-    if ig_config:
-        if ig_config['type'] == 'personal':
-            env_content = update_env_value(env_content, "INSTAGRAM_USERNAME", ig_config['username'])
-            env_content = update_env_value(env_content, "INSTAGRAM_PASSWORD", ig_config['password'])
-        else:
-            env_content = update_env_value(env_content, "INSTAGRAM_BUSINESS_ACCOUNT_ID", ig_config['business_id'])
-            env_content = update_env_value(env_content, "INSTAGRAM_ACCESS_TOKEN", ig_config['access_token'])
-    
     # Save .env file
     print_section("Saving Configuration")
     save_env_file(env_content)
@@ -397,7 +305,7 @@ def main():
     test_configuration()
     
     # Print next steps
-    print_next_steps(yt_channel_id is not None, ig_config is not None)
+    print_next_steps(yt_channel_id is not None)
 
 
 if __name__ == "__main__":

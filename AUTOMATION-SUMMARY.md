@@ -61,7 +61,7 @@
 **Automated Actions:**
 - ✅ Daily content generation at 9 AM UTC
 - ✅ Amazon affiliate link insertion
-- ✅ Multi-platform publishing (WordPress, Medium, Ghost, Webhooks)
+- ✅ YouTube community post preparation
 - ✅ Generated content stored as artifacts (30-day retention)
 
 **Triggers:**
@@ -70,7 +70,7 @@
 
 **Configuration Required:**
 - GitHub Secrets: `AMAZON_ASSOCIATE_ID`, `AMAZON_TRACKING_ID`
-- Optional: Publishing platform credentials
+- Optional: YouTube publishing credentials
 
 **Benefits:**
 - Set-and-forget content generation
@@ -188,11 +188,10 @@
    - Download artifacts to verify content
 
 ### Optional Enhancements
-1. **Add Publishing Platform Secrets**:
-   - `WORDPRESS_USERNAME` + `WORDPRESS_APP_PASSWORD`
-   - `MEDIUM_INTEGRATION_TOKEN`
-   - `GHOST_ADMIN_API_KEY`
-   - `WEBHOOK_URL`
+1. **Add YouTube Publishing Secrets**:
+   - `YOUTUBE_CHANNEL_ID`
+   - `YOUTUBE_CREDENTIALS_FILE`
+   - `YOUTUBE_API_KEY`
 
 2. **Customize Schedule**:
    - Edit `.github/workflows/scheduled-content.yml`

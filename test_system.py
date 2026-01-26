@@ -260,13 +260,13 @@ def test_publisher_initialization():
         publisher = ContentPublisher(config)
         
         # Should initialize without errors
-        print(f"   ✅ Publisher initialized successfully")
+        print("   ✅ Publisher initialized successfully")
         
         # Check for enabled platforms
         if publisher.has_enabled_platforms():
             print(f"   📤 Enabled platforms: {', '.join(publisher.get_enabled_platform_names())}")
         else:
-            print(f"   ℹ️  No publishing platforms enabled (this is OK for testing)")
+            print("   ℹ️  No publishing platforms enabled (this is OK for testing)")
         
         return True
             

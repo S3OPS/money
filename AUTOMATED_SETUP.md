@@ -135,14 +135,14 @@ The automated setup performs the following steps:
    - Checks for pip
 
 2. **Install Dependencies**
-   - Installs all Python packages from requirements.txt
-   - PyYAML, requests, Jinja2, schedule, python-dotenv, PyJWT
+    - Installs all Python packages from requirements.txt
+    - PyYAML, requests, Jinja2, schedule, python-dotenv
 
 3. **Environment Configuration**
    - Creates `.env` file with your credentials
    - Sets Amazon Associate ID and Tracking ID
    - Optionally sets OpenAI API key
-   - Adds placeholder values for publishing platforms
+    - Adds placeholder values for YouTube publishing
 
 4. **Verification**
    - Checks config.yaml exists
@@ -367,7 +367,7 @@ wait
 - **[README.md](README.md)** - General usage and features
 - **[QUICK_START.md](QUICK_START.md)** - Quick reference guide
 - **[AUTOMATION.md](AUTOMATION.md)** - GitHub Actions automation
-- **[PUBLISHING.md](PUBLISHING.md)** - Auto-publishing setup
+- **[PUBLISHING.md](PUBLISHING.md)** - YouTube publishing setup
 
 ---
 

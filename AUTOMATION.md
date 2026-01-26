@@ -73,7 +73,7 @@ The automation system includes:
 **What it does:**
 - 🤖 Automatically generates affiliate marketing content
 - 📝 Creates product review articles with Amazon affiliate links
-- 📤 Publishes to configured platforms (WordPress, Medium, Ghost, Webhooks)
+- 📤 Prepares YouTube Community posts when configured
 - 💾 Stores generated content as artifacts (30-day retention)
 - 📊 Provides detailed summary of generated content
 
@@ -87,12 +87,10 @@ You need to add secrets in your repository settings for this to work:
 - `AMAZON_ASSOCIATE_ID` - Your Amazon Associate ID
 - `AMAZON_TRACKING_ID` - Your Amazon tracking ID (e.g., yoursite-20)
 
-**Optional (for auto-publishing):**
-- `WORDPRESS_USERNAME` - Your WordPress username
-- `WORDPRESS_APP_PASSWORD` - WordPress application password
-- `MEDIUM_INTEGRATION_TOKEN` - Medium integration token
-- `GHOST_ADMIN_API_KEY` - Ghost Admin API key (format: id:secret)
-- `WEBHOOK_URL` - Custom webhook URL for publishing
+**Optional (for YouTube publishing):**
+- `YOUTUBE_CHANNEL_ID` - Your YouTube channel ID
+- `YOUTUBE_CREDENTIALS_FILE` - Path to OAuth credentials JSON
+- `YOUTUBE_API_KEY` - YouTube API key (optional)
 
 ### 4. Dependency Review (`dependency-review.yml`)
 
@@ -172,8 +170,8 @@ Edit `config.yaml` to control publishing:
 publishing:
   auto_publish: true  # Set to false to disable auto-publishing
   platforms:
-    - type: "wordpress"
-      enabled: true  # Enable/disable individual platforms
+    - type: "youtube"
+      enabled: true  # Enable/disable YouTube publishing
 ```
 
 ## 📊 Monitoring Automation

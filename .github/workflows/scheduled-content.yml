@@ -33,11 +33,9 @@ jobs:
       env:
         AMAZON_ASSOCIATE_ID: ${{ secrets.AMAZON_ASSOCIATE_ID }}
         AMAZON_TRACKING_ID: ${{ secrets.AMAZON_TRACKING_ID }}
-        WORDPRESS_USERNAME: ${{ secrets.WORDPRESS_USERNAME }}
-        WORDPRESS_APP_PASSWORD: ${{ secrets.WORDPRESS_APP_PASSWORD }}
-        MEDIUM_INTEGRATION_TOKEN: ${{ secrets.MEDIUM_INTEGRATION_TOKEN }}
-        GHOST_ADMIN_API_KEY: ${{ secrets.GHOST_ADMIN_API_KEY }}
-        WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+        YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
+        YOUTUBE_CREDENTIALS_FILE: ${{ secrets.YOUTUBE_CREDENTIALS_FILE }}
+        YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
       run: |
         echo "🚀 Starting content generation..."
         python content_generator.py
