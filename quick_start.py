@@ -87,6 +87,11 @@ def run_content_generator():
     print("\n🚀 Running content generator...\n")
     print("=" * 60)
     
+    if not os.path.exists('content_generator.py'):
+        print("\n❌ content_generator.py not found!")
+        print("   Please ensure you're running this script from the repository root.")
+        sys.exit(1)
+    
     try:
         subprocess.check_call([sys.executable, "content_generator.py"])
     except subprocess.CalledProcessError as e:
