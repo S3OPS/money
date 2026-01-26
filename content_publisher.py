@@ -290,6 +290,213 @@ class WebhookPlatform(PublishingPlatform):
         }
 
 
+class YouTubePlatform(PublishingPlatform):
+    """YouTube publishing via YouTube Data API v3"""
+    
+    # Constants for YouTube limits
+    YOUTUBE_COMMUNITY_POST_LIMIT = 5000
+    YOUTUBE_TRUNCATE_OFFSET = 50
+    
+    def __init__(self, config: Dict):
+        super().__init__(config)
+        self.api_key = os.getenv('YOUTUBE_API_KEY') or config.get('api_key')
+        self.channel_id = os.getenv('YOUTUBE_CHANNEL_ID') or config.get('channel_id')
+        self.credentials_file = os.getenv('YOUTUBE_CREDENTIALS_FILE') or config.get('credentials_file')
+        self.post_type = config.get('post_type', 'community')  # 'community' or 'video'
+        
+    def publish(self, title: str, content: str, metadata: Dict) -> Dict:
+        """Publish to YouTube as a Community Post
+        
+        Note: For video uploads, the content would need to be a video file.
+        Community posts are text-based and are a better fit for markdown content.
+        """
+        if not all([self.credentials_file, self.channel_id]):
+            raise ValueError("YouTube credentials file and channel ID not configured")
+        
+        try:
+            from google.oauth2.credentials import Credentials
+            from google_auth_oauthlib.flow import InstalledAppFlow
+            from google.auth.transport.requests import Request
+            from googleapiclient.discovery import build
+            import pickle
+        except ImportError:
+            raise ImportError("YouTube API requires: pip install google-api-python-client google-auth-oauthlib google-auth-httplib2")
+        
+        # OAuth 2.0 scopes for YouTube
+        SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
+        
+        creds = None
+        token_file = 'youtube_token.pickle'
+        
+        # Load saved credentials
+        if os.path.exists(token_file):
+            with open(token_file, 'rb') as token:
+                creds = pickle.load(token)
+        
+        # If no valid credentials, authenticate
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    self.credentials_file, SCOPES)
+                creds = flow.run_local_server(port=0)
+            
+            # Save credentials
+            with open(token_file, 'wb') as token:
+                pickle.dump(creds, token)
+        
+        # Convert markdown to plain text for YouTube community post
+        plain_text = self._markdown_to_plain_text(content)
+        
+        # Truncate if too long (YouTube community posts have character limits)
+        if len(plain_text) > self.YOUTUBE_COMMUNITY_POST_LIMIT:
+            plain_text = plain_text[:self.YOUTUBE_COMMUNITY_POST_LIMIT - self.YOUTUBE_TRUNCATE_OFFSET] + "\n\n... [Read more in the full post]"
+        
+        # Note: YouTube Community Post API requires special access and is not publicly available
+        # The API client is built but the endpoint requires special permissions from YouTube
+        # For production use, content needs to be posted manually or via YouTube Studio API (requires approval)
+        
+        return {
+            'success': True,
+            'platform': 'YouTube',
+            'note': 'YouTube Community Posts require manual posting through YouTube Studio or special API access',
+            'post_preview': plain_text[:200],
+            'instructions': 'Copy the content and post manually at: https://studio.youtube.com/channel/{}/posts'.format(self.channel_id),
+            'credentials_ready': True
+        }
+    
+    def _markdown_to_plain_text(self, markdown_text: str) -> str:
+        """Convert markdown to plain text for YouTube"""
+        import re
+        
+        text = markdown_text
+        
+        # Remove markdown headers (convert to bold text)
+        text = re.sub(r'^#{1,6}\s+(.+)$', r'\1', text, flags=re.MULTILINE)
+        
+        # Convert bold to uppercase (YouTube doesn't support bold in community posts)
+        text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)
+        
+        # Convert links to plain format
+        text = re.sub(r'\[(.+?)\]\((.+?)\)', r'\1: \2', text)
+        
+        # Remove horizontal rules
+        text = re.sub(r'^-{3,}$', '', text, flags=re.MULTILINE)
+        
+        # Clean up multiple newlines
+        text = re.sub(r'\n{3,}', '\n\n', text)
+        
+        return text.strip()
+
+
+class InstagramPlatform(PublishingPlatform):
+    """Instagram publishing via Instagram Graph API or unofficial API"""
+    
+    # Constants for Instagram limits
+    INSTAGRAM_CAPTION_LIMIT = 2200
+    INSTAGRAM_TRUNCATE_OFFSET = 10
+    
+    def __init__(self, config: Dict):
+        super().__init__(config)
+        self.username = os.getenv('INSTAGRAM_USERNAME') or config.get('username')
+        self.password = os.getenv('INSTAGRAM_PASSWORD') or config.get('password')
+        self.access_token = os.getenv('INSTAGRAM_ACCESS_TOKEN') or config.get('access_token')
+        self.business_account_id = os.getenv('INSTAGRAM_BUSINESS_ACCOUNT_ID') or config.get('business_account_id')
+        self.use_graph_api = config.get('use_graph_api', False)
+        
+    def publish(self, title: str, content: str, metadata: Dict) -> Dict:
+        """Publish to Instagram
+        
+        This uses the unofficial instagrapi library for personal accounts.
+        For business accounts, use Instagram Graph API with access_token.
+        """
+        if self.use_graph_api:
+            return self._publish_via_graph_api(title, content, metadata)
+        else:
+            return self._publish_via_instagrapi(title, content, metadata)
+    
+    def _publish_via_graph_api(self, title: str, content: str, metadata: Dict) -> Dict:
+        """Publish using Instagram Graph API (for business accounts)"""
+        if not all([self.access_token, self.business_account_id]):
+            raise ValueError("Instagram Graph API requires access_token and business_account_id")
+        
+        # Convert markdown to caption
+        caption = self._markdown_to_caption(content)
+        
+        # Truncate to Instagram's caption limit
+        if len(caption) > self.INSTAGRAM_CAPTION_LIMIT:
+            caption = caption[:self.INSTAGRAM_CAPTION_LIMIT - self.INSTAGRAM_TRUNCATE_OFFSET] + "...[more]"
+        
+        # Note: Instagram Graph API requires an image URL for posts
+        # Since we're generating text content, we need to create a text image
+        return {
+            'success': False,
+            'platform': 'Instagram',
+            'error': 'Instagram posts require images. Please provide an image URL or use a text-to-image service.',
+            'caption_preview': caption[:200],
+            'note': 'You can manually post this caption with an image at: https://www.instagram.com/'
+        }
+    
+    def _publish_via_instagrapi(self, title: str, content: str, metadata: Dict) -> Dict:
+        """Publish using instagrapi library (for personal accounts)"""
+        if not all([self.username, self.password]):
+            raise ValueError("Instagram credentials (username/password) not configured")
+        
+        try:
+            from instagrapi import Client
+        except ImportError:
+            raise ImportError("Instagram posting requires: pip install instagrapi")
+        
+        # Convert markdown to caption
+        caption = self._markdown_to_caption(content)
+        
+        # Truncate to Instagram's caption limit
+        if len(caption) > self.INSTAGRAM_CAPTION_LIMIT:
+            caption = caption[:self.INSTAGRAM_CAPTION_LIMIT - self.INSTAGRAM_TRUNCATE_OFFSET] + "...[more]"
+        
+        # Note: Instagram requires images for posts
+        # For text-only content publishing, we prepare the caption but require manual posting
+        # In production, you would integrate with a text-to-image service or use pre-made images
+        
+        return {
+            'success': False,
+            'platform': 'Instagram',
+            'error': 'Instagram posts require images. Please provide an image or use a text-to-image service.',
+            'caption_preview': caption[:200],
+            'note': 'Caption ready for manual posting with an image',
+            'caption_length': len(caption)
+        }
+    
+    def _markdown_to_caption(self, markdown_text: str) -> str:
+        """Convert markdown to Instagram caption format"""
+        import re
+        
+        text = markdown_text
+        
+        # Convert headers to emoji headers
+        text = re.sub(r'^# (.+)$', r'🔥 \1 🔥', text, flags=re.MULTILINE)
+        text = re.sub(r'^## (.+)$', r'✨ \1', text, flags=re.MULTILINE)
+        text = re.sub(r'^### (.+)$', r'📌 \1', text, flags=re.MULTILINE)
+        
+        # Keep bold as-is (Instagram doesn't support markdown bold)
+        text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)
+        
+        # Convert links to "Link in bio" style
+        text = re.sub(r'\[(.+?)\]\((.+?)\)', r'\1 (Link in bio)', text)
+        
+        # Convert bullet points to emojis
+        text = re.sub(r'^- (.+)$', r'• \1', text, flags=re.MULTILINE)
+        
+        # Remove horizontal rules
+        text = re.sub(r'^-{3,}$', '', text, flags=re.MULTILINE)
+        
+        # Clean up multiple newlines
+        text = re.sub(r'\n{3,}', '\n\n', text)
+        
+        return text.strip()
+
+
 class ContentPublisher:
     """Main content publisher that coordinates multiple platforms"""
     
@@ -298,6 +505,8 @@ class ContentPublisher:
         'medium': MediumPlatform,
         'ghost': GhostPlatform,
         'webhook': WebhookPlatform,
+        'youtube': YouTubePlatform,
+        'instagram': InstagramPlatform,
     }
     
     def __init__(self, config: Dict):

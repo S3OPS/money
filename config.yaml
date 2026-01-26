@@ -33,6 +33,23 @@ ai:
 publishing:
   auto_publish: false  # Set to true for automatic publishing
   platforms:
+    # YouTube Integration
+    - type: "youtube"
+      enabled: true
+      channel_id: ""  # Leave empty to use .env
+      credentials_file: ""  # Leave empty to use .env (path to OAuth credentials JSON)
+      api_key: ""  # Leave empty to use .env (optional)
+      post_type: "community"  # community posts (text-based)
+    
+    # Instagram Integration
+    - type: "instagram"
+      enabled: true
+      username: ""  # Leave empty to use .env
+      password: ""  # Leave empty to use .env
+      use_graph_api: false  # Set to true for business accounts with Graph API
+      access_token: ""  # Only for Graph API (business accounts)
+      business_account_id: ""  # Only for Graph API (business accounts)
+    
     # WordPress Integration
     - type: "wordpress"
       enabled: false
