@@ -45,8 +45,7 @@ def resolve_repo_from_git():
     if "/" not in path_part:
         return None, None
 
-    owner = "/".join(path_part.split("/")[:-1])
-    name = path_part.split("/")[-1]
+    owner, name = path_part.rsplit("/", 1)
 
     if not owner or not name:
         return None, None
