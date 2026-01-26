@@ -25,14 +25,24 @@ def show_config_example():
 publishing:
   auto_publish: true  # ⚠️ Set to true to enable auto-posting
   platforms:
+    # YouTube - Share content on your channel
+    - type: "youtube"
+      enabled: true  # ✅ Enable this platform
+      post_type: "community"  # Community posts
+    
+    # Instagram - Post to Instagram  
+    - type: "instagram"
+      enabled: true  # ✅ Enable this platform
+      use_graph_api: false  # false for personal accounts
+    
     # WordPress - Most popular blogging platform
     - type: "wordpress"
-      enabled: true  # ✅ Enable this platform
+      enabled: false  # ❌ Disabled
       status: "draft"  # Options: draft, publish, private
     
     # Medium - Reach wider audiences  
     - type: "medium"
-      enabled: true  # ✅ Enable this platform
+      enabled: false  # ❌ Disabled
       publish_status: "draft"  # Options: draft, public, unlisted
     
     # Ghost CMS - Modern publishing platform
@@ -54,6 +64,18 @@ publishing:
     print()
     
     example_env = """
+# YouTube Credentials
+YOUTUBE_CHANNEL_ID=UCxxxxxxxxxxxxxxxxxxxxx
+YOUTUBE_CREDENTIALS_FILE=youtube_credentials.json
+
+# Instagram Credentials  
+INSTAGRAM_USERNAME=your_instagram_username
+INSTAGRAM_PASSWORD=your_instagram_password
+
+# For Instagram Business Accounts (optional)
+INSTAGRAM_ACCESS_TOKEN=your-access-token
+INSTAGRAM_BUSINESS_ACCOUNT_ID=your-business-id
+
 # WordPress Credentials
 WP_SITE_URL=https://myblog.com
 WP_USERNAME=admin
@@ -103,12 +125,12 @@ WEBHOOK_URL=https://hooks.zapier.com/hooks/catch/123456/abcdef/
 ============================================================
 📢 AUTO-PUBLISHING ENABLED
 ============================================================
-🎯 Publishing to: WordPressPlatform, MediumPlatform
+🎯 Publishing to: YouTubePlatform, InstagramPlatform
 
-📤 Publishing to WordPressPlatform...
-   ✅ Published successfully: https://myblog.com/2026/01/25/top-5-tech-gadgets/
-📤 Publishing to MediumPlatform...
-   ✅ Published successfully: https://medium.com/@user/abc123
+📤 Publishing to YouTubePlatform...
+   ✅ Published successfully: https://youtube.com/community/your-post-id
+📤 Publishing to InstagramPlatform...
+   ✅ Published successfully: https://instagram.com/p/abc123
 
 ============================================================
 📊 PUBLISHING SUMMARY: 2/2 successful
@@ -134,17 +156,15 @@ WEBHOOK_URL=https://hooks.zapier.com/hooks/catch/123456/abcdef/
         "publishing_results": [
             {
                 "success": True,
-                "platform": "WordPress",
-                "post_id": 123,
-                "url": "https://myblog.com/2026/01/25/top-5-tech-gadgets/",
-                "status": "draft"
+                "platform": "YouTube",
+                "note": "Community post prepared",
+                "instructions": "Post manually at: https://studio.youtube.com/channel/UCxxx/posts"
             },
             {
                 "success": True,
-                "platform": "Medium",
-                "post_id": "abc123def456",
-                "url": "https://medium.com/@user/abc123",
-                "status": "draft"
+                "platform": "Instagram",
+                "caption_preview": "🔥 Top 5 Tech Gadgets Products...",
+                "note": "Caption ready for manual posting"
             }
         ]
     }
@@ -161,6 +181,8 @@ WEBHOOK_URL=https://hooks.zapier.com/hooks/catch/123456/abcdef/
     print("🔐 Credentials: Edit .env file")
     print()
     print("🎯 PLATFORM-SPECIFIC GUIDES IN PUBLISHING.md:")
+    print("   • YouTube setup (with OAuth 2.0 credentials)")
+    print("   • Instagram setup (personal or business account)")
     print("   • WordPress setup (with Application Password)")
     print("   • Medium setup (with Integration Token)")
     print("   • Ghost CMS setup (with Admin API Key)")

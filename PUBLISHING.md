@@ -40,12 +40,187 @@ Content will be generated AND automatically published to your configured platfor
 
 ## Supported Platforms
 
+- ✅ **YouTube** - Post content to YouTube Community (NEW!)
+- ✅ **Instagram** - Share content on Instagram (NEW!)
 - ✅ **WordPress** - Most popular blogging platform
 - ✅ **Medium** - Great for reaching wider audiences
 - ✅ **Ghost CMS** - Modern, fast publishing platform
 - ✅ **Webhook** - For custom integrations
 
 ## Platform Setup Guides
+
+### YouTube Setup
+
+YouTube is a great platform for sharing content with your audience through Community posts.
+
+#### Prerequisites
+- A YouTube channel
+- Google Cloud project with YouTube Data API v3 enabled
+- OAuth 2.0 credentials
+
+#### Step 1: Create Google Cloud Project and Enable YouTube API
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Enable the **YouTube Data API v3**:
+   - Go to "APIs & Services" → "Library"
+   - Search for "YouTube Data API v3"
+   - Click "Enable"
+
+#### Step 2: Create OAuth 2.0 Credentials
+
+1. Go to "APIs & Services" → "Credentials"
+2. Click "Create Credentials" → "OAuth client ID"
+3. Select "Desktop app" as the application type
+4. Name it (e.g., "Content Publisher")
+5. Click "Create"
+6. Download the credentials JSON file
+7. Save it as `youtube_credentials.json` in your project directory
+
+#### Step 3: Get Your Channel ID
+
+1. Go to [YouTube Studio](https://studio.youtube.com/)
+2. Click on "Settings" → "Channel"
+3. Click "Advanced settings"
+4. Copy your Channel ID
+
+#### Step 4: Configure Environment Variables
+
+Add to your `.env` file:
+
+```bash
+YOUTUBE_CHANNEL_ID=your-channel-id-here
+YOUTUBE_CREDENTIALS_FILE=youtube_credentials.json
+```
+
+#### Step 5: Enable in Config
+
+Edit `config.yaml`:
+
+```yaml
+publishing:
+  auto_publish: true
+  platforms:
+    - type: "youtube"
+      enabled: true
+      post_type: "community"
+```
+
+#### Notes
+
+- **First-time setup**: The first time you run the script, it will open a browser window for OAuth authentication
+- **Community posts**: The system prepares content for YouTube Community posts (text-based)
+- **Character limits**: YouTube Community posts have a 5,000 character limit
+- **Token storage**: Your authentication token is saved as `youtube_token.pickle` for future use
+
+#### Publishing Options
+
+- `post_type: "community"` - Text-based community posts (recommended for markdown content)
+
+---
+
+### Instagram Setup
+
+Instagram is perfect for visual content and reaching a social media audience.
+
+#### Prerequisites
+- An Instagram account (personal or business)
+- For personal accounts: Username and password
+- For business accounts: Facebook Page connected to Instagram, access token
+
+#### Method 1: Personal Account (Using instagrapi)
+
+This method uses the unofficial `instagrapi` library for personal accounts.
+
+##### Step 1: Configure Environment Variables
+
+Add to your `.env` file:
+
+```bash
+INSTAGRAM_USERNAME=your-instagram-username
+INSTAGRAM_PASSWORD=your-instagram-password
+```
+
+##### Step 2: Enable in Config
+
+Edit `config.yaml`:
+
+```yaml
+publishing:
+  auto_publish: true
+  platforms:
+    - type: "instagram"
+      enabled: true
+      use_graph_api: false
+```
+
+#### Method 2: Business Account (Using Instagram Graph API)
+
+This method uses the official Instagram Graph API for business/creator accounts.
+
+##### Prerequisites
+- Instagram Business or Creator account
+- Facebook Page connected to your Instagram account
+- Facebook Developer account
+
+##### Step 1: Set Up Facebook App
+
+1. Go to [Facebook Developers](https://developers.facebook.com/)
+2. Create a new app or use an existing one
+3. Add "Instagram Graph API" product
+4. Get a User Access Token with `instagram_basic` and `instagram_content_publish` permissions
+
+##### Step 2: Get Your Business Account ID
+
+1. Use the Graph API Explorer to call:
+   ```
+   GET /me/accounts
+   ```
+2. Find your Facebook Page ID
+3. Call:
+   ```
+   GET /{page-id}?fields=instagram_business_account
+   ```
+4. Get your Instagram Business Account ID
+
+##### Step 3: Configure Environment Variables
+
+Add to your `.env` file:
+
+```bash
+INSTAGRAM_ACCESS_TOKEN=your-access-token
+INSTAGRAM_BUSINESS_ACCOUNT_ID=your-business-account-id
+```
+
+##### Step 4: Enable in Config
+
+Edit `config.yaml`:
+
+```yaml
+publishing:
+  auto_publish: true
+  platforms:
+    - type: "instagram"
+      enabled: true
+      use_graph_api: true
+```
+
+#### Important Notes
+
+- **Image requirement**: Instagram posts require images. The current implementation prepares captions for manual posting
+- **Caption limits**: Instagram captions are limited to 2,200 characters
+- **Hashtags**: Add relevant hashtags to increase reach
+- **Links**: Instagram doesn't support clickable links in captions (except for business accounts with 10k+ followers)
+- **Manual posting**: Currently, the system prepares content for manual posting or requires additional image generation
+
+#### Future Enhancement
+
+To fully automate Instagram posting, you can:
+1. Generate images with text overlays using PIL/Pillow
+2. Use a text-to-image service
+3. Store pre-made product images
+
+---
 
 ### WordPress Setup
 

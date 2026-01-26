@@ -112,6 +112,8 @@ Edit `config.yaml` to customize:
 
 Want to automatically publish your generated content? See the [**Publishing Guide**](PUBLISHING.md) for detailed setup instructions for:
 
+- 📺 **YouTube** (NEW!)
+- 📸 **Instagram** (NEW!)
 - 📝 WordPress
 - 📰 Medium
 - 👻 Ghost CMS
@@ -126,9 +128,10 @@ Quick setup:
 publishing:
   auto_publish: true
   platforms:
-    - type: "wordpress"
+    - type: "youtube"
       enabled: true
-      status: "draft"  # or "publish"
+    - type: "instagram"
+      enabled: true
 ```
 
 3. Run the generator - content will be posted automatically!
@@ -226,12 +229,13 @@ content:
 ### Integration with Publishing Platforms
 
 The system is designed to integrate with:
+- **YouTube** (via YouTube Data API) ✅ **Now automated!**
+- **Instagram** (via Graph API or unofficial API) ✅ **Now automated!**
 - WordPress blogs (via REST API) ✅ **Now automated!**
 - Medium (via API) ✅ **Now automated!**
 - Ghost CMS (via Admin API) ✅ **Now automated!**
 - Custom platforms (via webhooks) ✅ **Now automated!**
 - Static site generators (Jekyll, Hugo, etc.)
-- Social media platforms
 - Email newsletters
 
 See [PUBLISHING.md](PUBLISHING.md) for setup instructions.
