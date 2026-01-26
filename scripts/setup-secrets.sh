@@ -105,20 +105,18 @@ add_secret "AMAZON_ASSOCIATE_ID" "Your Amazon Associate ID" "true" "mystore-20"
 add_secret "AMAZON_TRACKING_ID" "Your Amazon tracking ID" "true" "mystore-20"
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "📤 Optional: Publishing Platform Credentials"
+echo "📤 Optional: YouTube Publishing Credentials"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "The following secrets are optional but enable automatic publishing to platforms:"
+echo "The following secrets are optional but enable YouTube publishing:"
 echo ""
-read -p "Do you want to configure publishing platform credentials? (y/N): " setup_publishing
+read -p "Do you want to configure YouTube publishing credentials? (y/N): " setup_publishing
 
 if [[ "$setup_publishing" =~ ^[Yy]$ ]]; then
     echo ""
-    add_secret "WORDPRESS_USERNAME" "WordPress username for API access" "false" "admin"
-    add_secret "WORDPRESS_APP_PASSWORD" "WordPress application password" "false" "xxxx xxxx xxxx xxxx"
-    add_secret "MEDIUM_INTEGRATION_TOKEN" "Medium integration token" "false" ""
-    add_secret "GHOST_ADMIN_API_KEY" "Ghost Admin API key (format: id:secret)" "false" "abc123:def456"
-    add_secret "WEBHOOK_URL" "Custom webhook URL for publishing" "false" "https://example.com/webhook"
+    add_secret "YOUTUBE_CHANNEL_ID" "YouTube channel ID for community posts" "false" "UCxxxxxxxxxxxxxxxxxxxxx"
+    add_secret "YOUTUBE_CREDENTIALS_FILE" "YouTube OAuth credentials file path" "false" "youtube_credentials.json"
+    add_secret "YOUTUBE_API_KEY" "YouTube API key (optional)" "false" ""
 else
     echo "   ⏭️  Skipping publishing platform setup"
     echo ""

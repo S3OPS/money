@@ -3,17 +3,17 @@
 ## Running the setup script:
 
 ```bash
-$ python setup_youtube_instagram.py
+$ python setup_youtube.py
 ```
 
 ## What you'll see:
 
 ```
 ================================================================================
-🎥 YOUTUBE & INSTAGRAM AUTOMATED SETUP
+🎥 YOUTUBE AUTOMATED SETUP
 ================================================================================
 
-This script will help you configure YouTube and Instagram publishing.
+This script will help you configure YouTube publishing.
 Your credentials will be stored securely in the .env file.
 
 Press Enter to start setup (or Ctrl+C to cancel)... 
@@ -50,37 +50,12 @@ Enter your YouTube Channel ID: UCxxxxxxxxxxxxxxxxxxxxx
    Credentials: youtube_credentials.json
 
 ────────────────────────────────────────────────────────────────────────────────
-📝 Instagram Setup
-────────────────────────────────────────────────────────────────────────────────
-
-📸 Instagram can be configured in two ways:
-
-Option 1: Personal Account (Recommended)
-   • Uses your Instagram username and password
-   • Simpler setup
-   • Good for most users
-
-Option 2: Business Account
-   • Uses Instagram Graph API
-   • Requires Facebook Page connected to Instagram
-   • More complex setup
-
-Do you want to configure Instagram now? (y/n): y
-
-Choose account type (1=Personal, 2=Business): 1
-
-👤 Personal Account Setup
-Enter your Instagram username: your_username
-Enter your Instagram password (hidden): ********
-✅ Instagram Personal Account configured
-
-────────────────────────────────────────────────────────────────────────────────
 📝 Saving Configuration
 ────────────────────────────────────────────────────────────────────────────────
 
 ✅ Configuration saved to .env (secure permissions set)
 
-⚙️  Updating config.yaml to enable YouTube and Instagram...
+⚙️  Updating config.yaml to enable YouTube...
 ✅ Enabled auto_publish in config.yaml
 
 ────────────────────────────────────────────────────────────────────────────────
@@ -104,7 +79,6 @@ Enter your Instagram password (hidden): ********
 
 📋 What was configured:
    ✅ YouTube credentials added to .env
-   ✅ Instagram credentials added to .env
 
 🎯 Next Steps:
 
@@ -112,15 +86,11 @@ Enter your Instagram password (hidden): ********
    • Ensure 'youtube_credentials.json' is in the project directory
    • Run the generator - first time will open browser for OAuth
 
-2. 📸 Instagram:
-   • Add product images (Instagram requires images)
-   • System will prepare captions for you
-
-3. 🚀 Generate Content:
+2. 🚀 Generate Content:
    python content_generator.py
 
-4. 📖 Documentation:
-   • Quick guide: YOUTUBE_INSTAGRAM_SETUP.md
+3. 📖 Documentation:
+   • Quick guide: YOUTUBE_SETUP.md
    • Full guide: PUBLISHING.md
    • Main README: README.md
 

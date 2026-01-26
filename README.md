@@ -10,24 +10,24 @@ Generate high-quality product review content with embedded Amazon Associate affi
 
 > 🤖 **NEW:** Now with full CI/CD automation! See [AUTOMATION.md](AUTOMATION.md) for details.
 > 
-> 🎥 **NEWEST:** YouTube & Instagram auto-posting with one-command setup!
+> 🎥 **NEWEST:** YouTube auto-posting with one-command setup!
 
 ## 🚀 Quick Start (60 seconds!)
 
-### Option 1: YouTube & Instagram Setup (One Command! 🎉)
+### Option 1: YouTube Setup (One Command! 🎉)
 ```bash
 # 1. Clone and navigate
 cd money
 
-# 2. Run YouTube & Instagram automated setup
-python setup_youtube_instagram.py
+# 2. Run YouTube automated setup
+python setup_youtube.py
 
 # That's it! The script will:
 #   ✅ Install all dependencies
 #   ✅ Guide you through credential setup
 #   ✅ Store credentials securely in .env
 #   ✅ Test the configuration
-#   ✅ Enable YouTube and Instagram publishing
+#   ✅ Enable YouTube publishing
 ```
 
 ### Option 2: Complete Automation Setup
@@ -64,7 +64,7 @@ That's it! Your content will be in the `generated_content/` folder.
 
 - 🤖 **Fully Automated**: Generate content with a single command
 - 💵 **Amazon Associates Ready**: Automatic affiliate link insertion
-- 📤 **Auto-Publishing**: Automatically post to WordPress, Medium, Ghost, or custom platforms
+- 📤 **Auto-Publishing**: Automatically post to YouTube community posts
 - 📅 **Scheduled Generation**: Set it and forget it with automated scheduling
 - 🤖 **Full CI/CD Automation**: GitHub Actions workflows for testing, security, and scheduled content generation
 - 📝 **Multiple Formats**: Markdown, HTML, or JSON output
@@ -122,18 +122,11 @@ Edit `config.yaml` to customize:
 - **Generation interval**: How often to create new content
 - **Output format**: Markdown, HTML, or JSON
 - **Scheduling**: Enable automated daily generation
-- **Auto-Publishing**: Enable automatic posting to WordPress, Medium, Ghost, etc.
+- **Auto-Publishing**: Enable automatic posting to YouTube community posts
 
 ### Set Up Auto-Publishing (Optional)
 
-Want to automatically publish your generated content? See the [**Publishing Guide**](PUBLISHING.md) for detailed setup instructions for:
-
-- 📺 **YouTube** (NEW!)
-- 📸 **Instagram** (NEW!)
-- 📝 WordPress
-- 📰 Medium
-- 👻 Ghost CMS
-- 🔗 Custom Webhooks
+Want to automatically publish your generated content? See the [**Publishing Guide**](PUBLISHING.md) for detailed YouTube setup instructions.
 
 Quick setup:
 
@@ -145,8 +138,6 @@ publishing:
   auto_publish: true
   platforms:
     - type: "youtube"
-      enabled: true
-    - type: "instagram"
       enabled: true
 ```
 
@@ -196,7 +187,7 @@ is an excellent choice that delivers outstanding value.
 ---
 ```
 
-**Plus:** Content is automatically published to your configured platforms (WordPress, Medium, Ghost, etc.) if auto-publishing is enabled!
+**Plus:** Content is automatically prepared for YouTube Community posts when auto-publishing is enabled!
 
 ## 🔄 How It Works
 
@@ -205,7 +196,7 @@ is an excellent choice that delivers outstanding value.
 3. **Multiple Products**: Features multiple products per article
 4. **Professional Format**: Clean, readable markdown/HTML output
 5. **Metadata Tracking**: Tracks generated content for analytics
-6. **Auto-Publishing**: Optionally publishes to your blog/platform automatically
+6. **Auto-Publishing**: Optionally prepares YouTube community posts automatically
 
 ## 🎨 Customization
 
@@ -246,13 +237,6 @@ content:
 
 The system is designed to integrate with:
 - **YouTube** (via YouTube Data API) ✅ **Now automated!**
-- **Instagram** (via Graph API or unofficial API) ✅ **Now automated!**
-- WordPress blogs (via REST API) ✅ **Now automated!**
-- Medium (via API) ✅ **Now automated!**
-- Ghost CMS (via Admin API) ✅ **Now automated!**
-- Custom platforms (via webhooks) ✅ **Now automated!**
-- Static site generators (Jekyll, Hugo, etc.)
-- Email newsletters
 
 See [PUBLISHING.md](PUBLISHING.md) for setup instructions.
 

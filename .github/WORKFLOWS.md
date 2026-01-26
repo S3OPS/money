@@ -32,11 +32,9 @@ This repository has 4 automated workflows configured in `.github/workflows/`:
 - **Requires Secrets**:
   - AMAZON_ASSOCIATE_ID (required)
   - AMAZON_TRACKING_ID (required)
-  - WORDPRESS_USERNAME (optional)
-  - WORDPRESS_APP_PASSWORD (optional)
-  - MEDIUM_INTEGRATION_TOKEN (optional)
-  - GHOST_ADMIN_API_KEY (optional)
-  - WEBHOOK_URL (optional)
+- YOUTUBE_CHANNEL_ID (optional)
+- YOUTUBE_CREDENTIALS_FILE (optional)
+- YOUTUBE_API_KEY (optional)
 
 ## 4. Dependency Review (`dependency-review.yml`)
 - **Purpose**: Scan for vulnerable dependencies
@@ -58,11 +56,9 @@ This repository has 4 automated workflows configured in `.github/workflows/`:
 ### For Production (Repository Secrets Required)
 - [ ] AMAZON_ASSOCIATE_ID - Your Amazon Associate ID
 - [ ] AMAZON_TRACKING_ID - Your tracking ID (e.g., yoursite-20)
-- [ ] WORDPRESS_USERNAME - (Optional) WordPress username
-- [ ] WORDPRESS_APP_PASSWORD - (Optional) WordPress app password
-- [ ] MEDIUM_INTEGRATION_TOKEN - (Optional) Medium token
-- [ ] GHOST_ADMIN_API_KEY - (Optional) Ghost API key
-- [ ] WEBHOOK_URL - (Optional) Custom webhook
+- [ ] YOUTUBE_CHANNEL_ID - (Optional) YouTube channel ID
+- [ ] YOUTUBE_CREDENTIALS_FILE - (Optional) OAuth credentials file path
+- [ ] YOUTUBE_API_KEY - (Optional) YouTube API key
 
 ### Workflow Status
 All workflows are configured and ready to run. To see them in action:

@@ -159,20 +159,10 @@ AMAZON_TRACKING_ID=$AMAZON_TRACKING_ID
 OPENAI_API_KEY=${OPENAI_API_KEY:-optional-for-ai-content}
 
 # Publishing Platform Credentials (optional - enable in config.yaml)
-# WordPress
-WP_SITE_URL=https://yoursite.com
-WP_USERNAME=your-username
-WP_APP_PASSWORD=your-app-password
-
-# Medium
-MEDIUM_TOKEN=your-integration-token
-
-# Ghost CMS
-GHOST_API_URL=https://yoursite.com
-GHOST_ADMIN_KEY=your-admin-key-id:secret
-
-# Generic Webhook
-WEBHOOK_URL=https://your-webhook-endpoint.com/publish
+# YouTube
+YOUTUBE_CHANNEL_ID=your-channel-id
+YOUTUBE_CREDENTIALS_FILE=youtube_credentials.json
+YOUTUBE_API_KEY=optional-api-key
 EOF
 
 echo "✅ .env file created with your Amazon credentials"

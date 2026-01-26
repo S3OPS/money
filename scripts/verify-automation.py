@@ -64,11 +64,9 @@ def check_secrets():
     }
     
     optional_secrets = {
-        "WORDPRESS_USERNAME": "WordPress username",
-        "WORDPRESS_APP_PASSWORD": "WordPress app password",
-        "MEDIUM_INTEGRATION_TOKEN": "Medium token",
-        "GHOST_ADMIN_API_KEY": "Ghost API key",
-        "WEBHOOK_URL": "Custom webhook URL"
+        "YOUTUBE_CHANNEL_ID": "YouTube channel ID",
+        "YOUTUBE_CREDENTIALS_FILE": "YouTube OAuth credentials file path",
+        "YOUTUBE_API_KEY": "YouTube API key"
     }
     
     try:
@@ -96,7 +94,7 @@ def check_secrets():
                 all_required_present = False
         
         # Check optional secrets
-        print("\nOptional Secrets (for auto-publishing):")
+        print("\nOptional Secrets (for YouTube publishing):")
         optional_count = 0
         for secret, description in optional_secrets.items():
             if secret in configured_secrets:
@@ -108,7 +106,7 @@ def check_secrets():
         if optional_count > 0:
             print(f"\n{GREEN}ℹ️  {optional_count} optional secret(s) configured for publishing{RESET}")
         else:
-            print(f"\n{YELLOW}ℹ️  No publishing secrets configured (content will be stored as artifacts only){RESET}")
+            print(f"\n{YELLOW}ℹ️  No YouTube publishing secrets configured (content will be stored as artifacts only){RESET}")
         
         return all_required_present
         

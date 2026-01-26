@@ -25,8 +25,6 @@ python quick_start.py --amazon-id yourname-20 --no-prompt
 ```bash
 # Traditional interactive mode
 python quick_start.py
-# OR
-./setup.sh
 ```
 
 ### Option 4: Super Quick (if already configured)
@@ -103,13 +101,11 @@ python content_generator.py --schedule
 money/
 ├── 📄 README.md                  # Full documentation
 ├── 📄 QUICK_START.md             # This file - quick reference
-├── 📄 ADVANCED.md                # Advanced features & integrations
 ├── ⚙️  config.yaml               # Your settings (edit this!)
 ├── 🔐 .env.example               # Security template
 ├── 🐍 content_generator.py       # Main system (magic happens here)
 ├── 🚀 quick_start.py             # Interactive/automated setup
 ├── 🤖 automated_setup.sh         # ONE-COMMAND fully automated setup!
-├── 🔧 setup.sh                   # Legacy one-click setup
 ├── 🧪 test_system.py             # Validation tests
 ├── 📦 requirements.txt           # Dependencies
 └── 📂 generated_content/         # Your money-making content!
@@ -135,7 +131,7 @@ Edit `config.yaml` to change:
 ✅ **Tested** - All tests passing (run: `python test_system.py`)  
 ✅ **Secure** - No vulnerabilities (CodeQL verified)  
 ✅ **Documented** - Complete guides included  
-✅ **Extensible** - See ADVANCED.md for more features  
+✅ **Extensible** - Customize templates and categories as needed  
 
 ---
 
@@ -170,7 +166,7 @@ Edit `config.yaml` to change:
 - ⚡ Generates content in **< 1 second**
 - 📝 Creates **400+ word articles** with 5 affiliate links
 - 🔗 100% **valid Amazon affiliate URLs**
-- ✅ **6/6 tests passing**
+- ✅ **7/7 tests passing**
 - 🔒 **0 security vulnerabilities**
 
 ---

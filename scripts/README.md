@@ -39,7 +39,7 @@ This is your all-in-one automation script that:
 
 Interactive script that:
 - Prompts for required Amazon Associate credentials
-- Optionally configures publishing platform secrets
+- Optionally configures YouTube publishing secrets
 - Verifies existing secrets before overwriting
 - Uses GitHub CLI to securely add secrets
 
@@ -56,11 +56,9 @@ Interactive script that:
 **Secrets configured:**
 - `AMAZON_ASSOCIATE_ID` (required)
 - `AMAZON_TRACKING_ID` (required)
-- `WORDPRESS_USERNAME` (optional)
-- `WORDPRESS_APP_PASSWORD` (optional)
-- `MEDIUM_INTEGRATION_TOKEN` (optional)
-- `GHOST_ADMIN_API_KEY` (optional)
-- `WEBHOOK_URL` (optional)
+- `YOUTUBE_CHANNEL_ID` (optional)
+- `YOUTUBE_CREDENTIALS_FILE` (optional)
+- `YOUTUBE_API_KEY` (optional)
 
 ---
 
@@ -93,7 +91,7 @@ python3 scripts/verify-automation.py
 🔐 Checking GitHub Secrets
   ✅ AMAZON_ASSOCIATE_ID - Your Amazon Associate ID
   ✅ AMAZON_TRACKING_ID - Your Amazon tracking ID
-  ⊘  WORDPRESS_USERNAME - WordPress username
+   ⊘  YOUTUBE_CHANNEL_ID - YouTube channel ID
 
 📊 Verification Summary
   ✅ PASS: GitHub CLI
@@ -222,6 +220,6 @@ After running these scripts, your repository will be fully automated:
 - ✅ Tests run on every push/PR
 - 🔒 Security scanning continuously monitors for vulnerabilities
 - 📅 Content generates daily at 9 AM UTC
-- 📤 Auto-publishes to your configured platforms
+- 📤 Prepares YouTube Community posts when configured
 
 **No manual intervention required!** Just sit back and watch your automated affiliate marketing system work. 💰

@@ -113,11 +113,10 @@ The script will:
 - Your Amazon Associate ID (e.g., "mystore-20")
 - Your Amazon Tracking ID (e.g., "mystore-20")
 
-**Optional (for auto-publishing):**
-- WordPress credentials
-- Medium integration token
-- Ghost Admin API key
-- Custom webhook URL
+**Optional (for YouTube publishing):**
+- YouTube channel ID
+- YouTube OAuth credentials file
+- YouTube API key
 
 ---
 
@@ -129,12 +128,10 @@ The script will prompt you for these secrets:
 - `AMAZON_ASSOCIATE_ID` - Your Amazon Associate ID
 - `AMAZON_TRACKING_ID` - Your Amazon tracking ID
 
-### Optional Secrets (for publishing)
-- `WORDPRESS_USERNAME` - WordPress username
-- `WORDPRESS_APP_PASSWORD` - WordPress app password
-- `MEDIUM_INTEGRATION_TOKEN` - Medium token
-- `GHOST_ADMIN_API_KEY` - Ghost API key
-- `WEBHOOK_URL` - Custom webhook URL
+### Optional Secrets (for YouTube publishing)
+- `YOUTUBE_CHANNEL_ID` - YouTube channel ID
+- `YOUTUBE_CREDENTIALS_FILE` - OAuth credentials file path
+- `YOUTUBE_API_KEY` - YouTube API key
 
 **All secrets are configured securely via GitHub CLI**
 
@@ -286,7 +283,7 @@ After running `./scripts/complete-setup.sh`, you should have:
 
 1. ⏰ **Daily at 9 AM UTC:** Content generates automatically
 2. 📝 **Product reviews created:** With Amazon affiliate links
-3. 📤 **Auto-published:** To your configured platforms (WordPress, Medium, etc.)
+3. 📤 **Prepared for publishing:** YouTube Community posts when configured
 4. 💾 **Artifacts stored:** 30-day retention for manual review
 5. 🔒 **Security scanning:** Continuous monitoring for vulnerabilities
 6. ✅ **Quality checks:** Automated testing on every code change
