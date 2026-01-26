@@ -38,7 +38,7 @@ cd money
 # 2. Run complete automated setup
 ./scripts/complete-setup.sh
 
-# That's it! The script handles everything.
+# Interactive prompts for GitHub Actions setup
 ```
 
 ### Option 3: Manual Setup
