@@ -30,20 +30,31 @@ REPO_PATH="${REPO_PATH:-}"
 
 parse_repo_from_remote() {
     local remote_url="$1"
+    local path_part=""
 
-    if [[ "$remote_url" =~ ^git@[^:]+:([^/]+)/([^/]+)(\.git)?$ ]]; then
-        REPO_OWNER="${BASH_REMATCH[1]}"
-        REPO_NAME="${BASH_REMATCH[2]}"
-        return 0
+    if [[ "$remote_url" =~ ^git@[^:]+:(.+)$ ]]; then
+        path_part="${BASH_REMATCH[1]}"
+    elif [[ "$remote_url" =~ ^https?://[^/]+/(.+)$ ]]; then
+        path_part="${BASH_REMATCH[1]}"
+    else
+        return 1
     fi
 
-    if [[ "$remote_url" =~ ^https?://[^/]+/([^/]+)/([^/]+)(\.git)?$ ]]; then
-        REPO_OWNER="${BASH_REMATCH[1]}"
-        REPO_NAME="${BASH_REMATCH[2]}"
-        return 0
+    path_part="${path_part%.git}"
+    path_part="${path_part%/}"
+
+    if [[ "$path_part" != */* ]]; then
+        return 1
     fi
 
-    return 1
+    REPO_NAME="${path_part##*/}"
+    REPO_OWNER="${path_part%/*}"
+
+    if [ -z "$REPO_OWNER" ] || [ -z "$REPO_NAME" ]; then
+        return 1
+    fi
+
+    return 0
 }
 
 if [ -z "$REPO_OWNER" ] || [ -z "$REPO_NAME" ]; then

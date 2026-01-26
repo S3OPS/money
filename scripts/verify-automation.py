@@ -33,16 +33,25 @@ def resolve_repo_from_git():
     if remote_url.endswith(".git"):
         remote_url = remote_url[:-4]
 
+    path_part = ""
     if remote_url.startswith("git@"):
         path_part = remote_url.split(":", 1)[-1]
+    elif remote_url.startswith("http"):
+        path_part = remote_url.split("://", 1)[-1].split("/", 1)[-1]
     else:
-        path_part = remote_url.split("/", 3)[-1]
-
-    parts = path_part.split("/")
-    if len(parts) != 2:
         return None, None
 
-    return parts[0], parts[1]
+    path_part = path_part.strip("/")
+    if "/" not in path_part:
+        return None, None
+
+    owner = "/".join(path_part.split("/")[:-1])
+    name = path_part.split("/")[-1]
+
+    if not owner or not name:
+        return None, None
+
+    return owner, name
 
 
 def resolve_repo_owner_and_name():
