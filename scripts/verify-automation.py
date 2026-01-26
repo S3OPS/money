@@ -5,13 +5,73 @@ Checks if all required secrets are configured and workflows are ready
 """
 
 import os
-import sys
+import shutil
 import subprocess
-import json
+import sys
 from pathlib import Path
 
-REPO_OWNER = "S3OPS"
-REPO_NAME = "money"
+DEFAULT_REPO_OWNER = "S3OPS"
+DEFAULT_REPO_NAME = "money"
+
+
+def resolve_repo_from_git():
+    try:
+        result = subprocess.run(
+            ["git", "config", "--get", "remote.origin.url"],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None, None
+
+    remote_url = result.stdout.strip()
+    if not remote_url:
+        return None, None
+
+    remote_url = remote_url.rstrip("/")
+    if remote_url.endswith(".git"):
+        remote_url = remote_url[:-4]
+
+    if remote_url.startswith("git@"):
+        path_part = remote_url.split(":", 1)[-1]
+    else:
+        path_part = remote_url.split("/", 3)[-1]
+
+    parts = path_part.split("/")
+    if len(parts) != 2:
+        return None, None
+
+    return parts[0], parts[1]
+
+
+def resolve_repo_owner_and_name():
+    repo_path = (
+        subprocess.run(
+            ["gh", "repo", "view", "--json", "nameWithOwner", "--jq", ".nameWithOwner"],
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        if shutil.which("gh")
+        else ""
+    )
+    if repo_path and "/" in repo_path:
+        owner, name = repo_path.split("/", 1)
+        return owner, name
+
+    owner = os.getenv("REPO_OWNER")
+    name = os.getenv("REPO_NAME")
+    if owner and name:
+        return owner, name
+
+    owner, name = resolve_repo_from_git()
+    if owner and name:
+        return owner, name
+
+    return DEFAULT_REPO_OWNER, DEFAULT_REPO_NAME
+
+
+REPO_OWNER, REPO_NAME = resolve_repo_owner_and_name()
 
 # ANSI color codes
 GREEN = "\033[92m"

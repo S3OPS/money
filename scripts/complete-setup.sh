@@ -23,6 +23,35 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 cd "$REPO_ROOT"
 
+# Determine repository owner/name for links and child scripts
+REPO_OWNER="${REPO_OWNER:-}"
+REPO_NAME="${REPO_NAME:-}"
+REPO_PATH="${REPO_PATH:-}"
+
+if [ -z "$REPO_OWNER" ] || [ -z "$REPO_NAME" ]; then
+    if [ -z "$REPO_PATH" ] && command -v gh &> /dev/null; then
+        REPO_PATH=$(gh repo view --json nameWithOwner --jq .nameWithOwner 2>/dev/null || true)
+    fi
+    if [ -z "$REPO_PATH" ]; then
+        REMOTE_URL=$(git config --get remote.origin.url 2>/dev/null || true)
+        if [ -n "$REMOTE_URL" ]; then
+            REPO_PATH=$(echo "$REMOTE_URL" | sed -E 's#.*[/:]([^/]+)/([^/]+)(\.git)?$#\1/\2#')
+            if [[ "$REPO_PATH" != */* ]]; then
+                REPO_PATH=""
+            fi
+        fi
+    fi
+    if [ -n "$REPO_PATH" ]; then
+        REPO_OWNER="${REPO_PATH%%/*}"
+        REPO_NAME="${REPO_PATH##*/}"
+    fi
+fi
+
+REPO_OWNER="${REPO_OWNER:-S3OPS}"
+REPO_NAME="${REPO_NAME:-money}"
+REPO_SLUG="${REPO_OWNER}/${REPO_NAME}"
+export REPO_OWNER REPO_NAME REPO_PATH
+
 # Colors
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -100,7 +129,7 @@ else
     echo -e "${YELLOW}ℹ️  GitHub CLI not available${NC}"
     echo ""
     echo "To setup secrets manually:"
-    echo "  1. Go to: https://github.com/S3OPS/money/settings/secrets/actions"
+    echo "  1. Go to: https://github.com/${REPO_SLUG}/settings/secrets/actions"
     echo "  2. Add these required secrets:"
     echo "     • AMAZON_ASSOCIATE_ID"
     echo "     • AMAZON_TRACKING_ID"
@@ -165,7 +194,7 @@ echo "2. 🔐 Setup GitHub Secrets (if not done already):"
 echo "   ./scripts/setup-secrets.sh"
 echo ""
 echo "3. 🌐 Enable workflows on GitHub:"
-echo "   • Go to: https://github.com/S3OPS/money/actions"
+echo "   • Go to: https://github.com/${REPO_SLUG}/actions"
 echo "   • Click 'I understand my workflows, go ahead and enable them'"
 echo ""
 echo "4. 🧪 Test the scheduled content generation:"

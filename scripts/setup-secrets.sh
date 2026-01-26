@@ -4,8 +4,9 @@
 
 set -e
 
-REPO_OWNER="S3OPS"
-REPO_NAME="money"
+REPO_OWNER="${REPO_OWNER:-S3OPS}"
+REPO_NAME="${REPO_NAME:-money}"
+REPO_PATH="${REPO_PATH:-${REPO_OWNER}/${REPO_NAME}}"
 
 echo "╔══════════════════════════════════════════════════════════════════════════════╗"
 echo "║         🔐 GitHub Secrets Automation Setup for $REPO_OWNER/$REPO_NAME          ║"
