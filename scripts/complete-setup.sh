@@ -47,8 +47,8 @@ parse_repo_from_remote() {
         return 1
     fi
 
-    REPO_NAME="${path_part##*/}"
     REPO_OWNER="${path_part%/*}"
+    REPO_NAME="${path_part##*/}"
 
     if [ -z "$REPO_OWNER" ] || [ -z "$REPO_NAME" ]; then
         return 1
@@ -77,8 +77,7 @@ fi
 
 REPO_OWNER="${REPO_OWNER:-S3OPS}"
 REPO_NAME="${REPO_NAME:-money}"
-REPO_SLUG="${REPO_OWNER}/${REPO_NAME}"
-REPO_PATH="${REPO_SLUG}"
+REPO_PATH="${REPO_OWNER}/${REPO_NAME}"
 export REPO_OWNER REPO_NAME REPO_PATH
 
 # Colors
@@ -158,7 +157,7 @@ else
     echo -e "${YELLOW}ℹ️  GitHub CLI not available${NC}"
     echo ""
     echo "To setup secrets manually:"
-    echo "  1. Go to: https://github.com/${REPO_SLUG}/settings/secrets/actions"
+    echo "  1. Go to: https://github.com/${REPO_PATH}/settings/secrets/actions"
     echo "  2. Add these required secrets:"
     echo "     • AMAZON_ASSOCIATE_ID"
     echo "     • AMAZON_TRACKING_ID"
@@ -223,7 +222,7 @@ echo "2. 🔐 Setup GitHub Secrets (if not done already):"
 echo "   ./scripts/setup-secrets.sh"
 echo ""
 echo "3. 🌐 Enable workflows on GitHub:"
-echo "   • Go to: https://github.com/${REPO_SLUG}/actions"
+echo "   • Go to: https://github.com/${REPO_PATH}/actions"
 echo "   • Click 'I understand my workflows, go ahead and enable them'"
 echo ""
 echo "4. 🧪 Test the scheduled content generation:"
