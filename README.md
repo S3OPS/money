@@ -10,11 +10,46 @@ Generate high-quality product review content with embedded Amazon Associate affi
 
 > 🤖 **NEW:** Now with full CI/CD automation! See [AUTOMATION.md](AUTOMATION.md) for details.
 > 
-> 🚀 **QUICKEST SETUP:** Run `./scripts/complete-setup.sh` for fully automated configuration!
+> 🚀 **QUICKEST SETUP:** One-command fully automated setup with zero user input!
 
 ## 🚀 Quick Start (60 seconds!)
 
-### Option 1: Fully Automated (Recommended)
+### Option 1: One-Command Fully Automated Setup (Recommended - Zero Input!)
+```bash
+# Clone and setup in ONE command:
+git clone https://github.com/S3OPS/money.git && cd money && \
+./automated_setup.sh --amazon-id YOUR_AMAZON_ID
+
+# That's it! Everything is configured and content is generated!
+```
+
+**Alternative methods:**
+```bash
+# Using environment variables:
+AMAZON_ASSOCIATE_ID=yourname-20 ./automated_setup.sh
+
+# With OpenAI API key:
+./automated_setup.sh --amazon-id yourname-20 --openai-key sk-...
+
+# Skip initial content generation:
+./automated_setup.sh --amazon-id yourname-20 --skip-generation
+
+# Skip tests for faster setup:
+./automated_setup.sh --amazon-id yourname-20 --skip-tests
+```
+
+### Option 2: Python Quick Start (Automated)
+```bash
+# Clone and navigate
+cd money
+
+# Run with your Amazon ID - no prompts!
+python quick_start.py --amazon-id yourname-20 --no-prompt
+
+# Content is generated automatically!
+```
+
+### Option 3: Interactive Setup (GitHub CI/CD Focused)
 ```bash
 # 1. Clone and navigate
 cd money
@@ -22,10 +57,10 @@ cd money
 # 2. Run complete automated setup
 ./scripts/complete-setup.sh
 
-# That's it! The script handles everything.
+# Interactive prompts for GitHub Actions setup
 ```
 
-### Option 2: Manual Setup
+### Option 4: Manual Setup
 ```bash
 # 1. Clone and navigate
 cd money
