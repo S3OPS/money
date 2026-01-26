@@ -28,6 +28,24 @@ REPO_OWNER="${REPO_OWNER:-}"
 REPO_NAME="${REPO_NAME:-}"
 REPO_PATH="${REPO_PATH:-}"
 
+parse_repo_from_remote() {
+    local remote_url="$1"
+
+    if [[ "$remote_url" =~ ^git@[^:]+:([^/]+)/([^/]+)(\.git)?$ ]]; then
+        REPO_OWNER="${BASH_REMATCH[1]}"
+        REPO_NAME="${BASH_REMATCH[2]}"
+        return 0
+    fi
+
+    if [[ "$remote_url" =~ ^https?://[^/]+/([^/]+)/([^/]+)(\.git)?$ ]]; then
+        REPO_OWNER="${BASH_REMATCH[1]}"
+        REPO_NAME="${BASH_REMATCH[2]}"
+        return 0
+    fi
+
+    return 1
+}
+
 if [ -z "$REPO_OWNER" ] || [ -z "$REPO_NAME" ]; then
     if [ -z "$REPO_PATH" ] && command -v gh &> /dev/null; then
         REPO_PATH=$(gh repo view --json nameWithOwner --jq .nameWithOwner 2>/dev/null || true)
@@ -35,9 +53,8 @@ if [ -z "$REPO_OWNER" ] || [ -z "$REPO_NAME" ]; then
     if [ -z "$REPO_PATH" ]; then
         REMOTE_URL=$(git config --get remote.origin.url 2>/dev/null || true)
         if [ -n "$REMOTE_URL" ]; then
-            REPO_PATH=$(echo "$REMOTE_URL" | sed -E 's#.*[/:]([^/]+)/([^/]+)(\.git)?$#\1/\2#')
-            if [[ "$REPO_PATH" != */* ]]; then
-                REPO_PATH=""
+            if parse_repo_from_remote "$REMOTE_URL"; then
+                REPO_PATH="${REPO_OWNER}/${REPO_NAME}"
             fi
         fi
     fi

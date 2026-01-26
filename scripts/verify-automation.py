@@ -46,15 +46,17 @@ def resolve_repo_from_git():
 
 
 def resolve_repo_owner_and_name():
-    repo_path = (
-        subprocess.run(
-            ["gh", "repo", "view", "--json", "nameWithOwner", "--jq", ".nameWithOwner"],
-            capture_output=True,
-            text=True,
-        ).stdout.strip()
-        if shutil.which("gh")
-        else ""
-    )
+    repo_path = ""
+    if shutil.which("gh"):
+        try:
+            repo_path = subprocess.run(
+                ["gh", "repo", "view", "--json", "nameWithOwner", "--jq", ".nameWithOwner"],
+                capture_output=True,
+                text=True,
+                check=True,
+            ).stdout.strip()
+        except subprocess.CalledProcessError:
+            repo_path = ""
     if repo_path and "/" in repo_path:
         owner, name = repo_path.split("/", 1)
         return owner, name
