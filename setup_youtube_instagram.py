@@ -77,7 +77,14 @@ def load_env_file():
 
 
 def update_env_value(env_content, key, value):
-    """Update or add a value in .env content"""
+    """Update or add a value in .env content with proper escaping"""
+    # Escape special characters in value
+    # Quote value if it contains spaces or special characters
+    if any(char in value for char in [' ', '"', "'", '\\', '\n', '\r', '$', '`']):
+        # Escape quotes and backslashes
+        value = value.replace('\\', '\\\\').replace('"', '\\"')
+        value = f'"{value}"'
+    
     lines = env_content.split('\n')
     updated = False
     new_lines = []
@@ -240,16 +247,35 @@ def update_config_yaml():
     print()
     print("⚙️  Updating config.yaml to enable YouTube and Instagram...")
     
-    with open(config_file, 'r') as f:
-        content = f.read()
-    
-    # Enable auto_publish if not already enabled
-    if 'auto_publish: false' in content:
-        content = content.replace('auto_publish: false', 'auto_publish: true')
-        print("✅ Enabled auto_publish in config.yaml")
-    
-    with open(config_file, 'w') as f:
-        f.write(content)
+    try:
+        import yaml
+        
+        with open(config_file, 'r') as f:
+            config = yaml.safe_load(f)
+        
+        # Enable auto_publish if not already enabled
+        if 'publishing' in config:
+            if config['publishing'].get('auto_publish') == False:
+                config['publishing']['auto_publish'] = True
+                print("✅ Enabled auto_publish in config.yaml")
+        
+        # Save back to file
+        with open(config_file, 'w') as f:
+            yaml.dump(config, f, default_flow_style=False, sort_keys=False)
+            
+    except ImportError:
+        # Fallback to simple string replacement if yaml not available
+        with open(config_file, 'r') as f:
+            content = f.read()
+        
+        # Only replace if it's the exact key-value pair in publishing section
+        if 'auto_publish: false' in content:
+            content = content.replace('auto_publish: false', 'auto_publish: true')
+            with open(config_file, 'w') as f:
+                f.write(content)
+            print("✅ Enabled auto_publish in config.yaml")
+    except Exception as e:
+        print(f"⚠️  Could not update config.yaml: {e}")
 
 
 def test_configuration():
@@ -334,8 +360,8 @@ def main():
     """Main setup flow"""
     print_header()
     
-    # Confirm setup
-    proceed = input("Press Enter to start setup (or Ctrl+C to cancel)... ")
+    # Confirm setup (wait for user to press Enter)
+    input("Press Enter to start setup (or Ctrl+C to cancel)... ")
     
     # Check dependencies
     check_dependencies()
