@@ -10,11 +10,27 @@ Generate high-quality product review content with embedded Amazon Associate affi
 
 > 🤖 **NEW:** Now with full CI/CD automation! See [AUTOMATION.md](AUTOMATION.md) for details.
 > 
-> 🚀 **QUICKEST SETUP:** Run `./scripts/complete-setup.sh` for fully automated configuration!
+> 🎥 **NEWEST:** YouTube & Instagram auto-posting with one-command setup!
 
 ## 🚀 Quick Start (60 seconds!)
 
-### Option 1: Fully Automated (Recommended)
+### Option 1: YouTube & Instagram Setup (One Command! 🎉)
+```bash
+# 1. Clone and navigate
+cd money
+
+# 2. Run YouTube & Instagram automated setup
+python setup_youtube_instagram.py
+
+# That's it! The script will:
+#   ✅ Install all dependencies
+#   ✅ Guide you through credential setup
+#   ✅ Store credentials securely in .env
+#   ✅ Test the configuration
+#   ✅ Enable YouTube and Instagram publishing
+```
+
+### Option 2: Complete Automation Setup
 ```bash
 # 1. Clone and navigate
 cd money
@@ -25,7 +41,7 @@ cd money
 # That's it! The script handles everything.
 ```
 
-### Option 2: Manual Setup
+### Option 3: Manual Setup
 ```bash
 # 1. Clone and navigate
 cd money

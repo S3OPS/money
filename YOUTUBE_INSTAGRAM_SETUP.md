@@ -9,7 +9,36 @@ The system now posts to **YouTube** and **Instagram** instead of WordPress, Medi
 - ✅ Instagram posts enabled by default
 - ✅ Other platforms (WordPress, Medium, Ghost) disabled by default
 
-## 🎯 Quick Start (5 minutes)
+## 🎯 Quick Start - ONE COMMAND! (Recommended)
+
+### Automated Setup (Fastest Method)
+
+Run this single command to set up everything:
+
+```bash
+python setup_youtube_instagram.py
+```
+
+**What it does:**
+- ✅ Installs all required dependencies
+- ✅ Guides you through credential setup with interactive prompts
+- ✅ Stores credentials securely in .env with proper permissions
+- ✅ Updates config.yaml to enable YouTube and Instagram
+- ✅ Tests your configuration
+- ✅ Provides next steps
+
+**What you'll need:**
+- YouTube Channel ID (from YouTube Studio)
+- YouTube OAuth credentials JSON file (from Google Cloud Console)
+- Instagram username and password (for personal accounts)
+
+That's it! The script handles everything else.
+
+---
+
+## 📋 Manual Setup (Alternative Method)
+
+If you prefer to set up manually, follow these steps:
 
 ### Step 1: Choose Your Setup Method
 
