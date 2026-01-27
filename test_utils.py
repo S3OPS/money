@@ -1,0 +1,165 @@
+#!/usr/bin/env python3
+"""
+Unit tests for utility modules
+"""
+
+import sys
+from utils import URLValidator, TextProcessor
+
+
+def test_url_validator():
+    """Test URL validation utility"""
+    print("🧪 Testing URLValidator...")
+    
+    # Valid Amazon URLs
+    valid_urls = [
+        "https://www.amazon.com/dp/B08N5WRWNW",
+        "https://amazon.com/product/xyz",
+        "https://www.amazon.co.uk/item/abc",
+        "https://amazon.ca/test",
+    ]
+    
+    # Invalid URLs
+    invalid_urls = [
+        "https://www.amazin.com/fake",  # Typo
+        "https://amazon.phishing.com/product",  # Phishing
+        "https://www.google.com",
+        "not-a-url",
+    ]
+    
+    try:
+        # Test valid URLs
+        for url in valid_urls:
+            if not URLValidator.is_valid_amazon_url(url):
+                print(f"   ❌ Failed to validate valid URL: {url}")
+                return False
+        
+        # Test invalid URLs
+        for url in invalid_urls:
+            if URLValidator.is_valid_amazon_url(url):
+                print(f"   ❌ Incorrectly validated invalid URL: {url}")
+                return False
+        
+        # Test domain extraction
+        domain = URLValidator.get_domain("https://www.amazon.com/test")
+        if domain != "www.amazon.com":
+            print(f"   ❌ Domain extraction failed: got {domain}")
+            return False
+        
+        print("   ✅ URLValidator working correctly")
+        return True
+        
+    except Exception as e:
+        print(f"   ❌ URLValidator error: {e}")
+        return False
+
+
+def test_text_processor():
+    """Test text processing utility"""
+    print("🧪 Testing TextProcessor...")
+    
+    try:
+        # Test markdown to plain text
+        markdown = """
+# Heading 1
+## Heading 2
+
+This is **bold** text and this is a [link](https://example.com).
+
+---
+
+More content here.
+"""
+        
+        plain = TextProcessor.markdown_to_plain_text(markdown)
+        
+        # Check that markdown formatting is removed
+        if "#" in plain:
+            print("   ❌ Markdown headers not removed")
+            return False
+        
+        if "**" in plain:
+            print("   ❌ Bold markers not removed")
+            return False
+        
+        if "[link]" in plain:
+            print("   ❌ Link format not converted")
+            return False
+        
+        # Test truncation
+        long_text = "A" * 1000
+        truncated = TextProcessor.truncate_with_ellipsis(long_text, 100)
+        
+        if len(truncated) > 110:  # Allow some space for ellipsis
+            print(f"   ❌ Truncation failed: length {len(truncated)}")
+            return False
+        
+        if "..." not in truncated and "[Read more]" not in truncated:
+            print("   ❌ Ellipsis not added")
+            return False
+        
+        # Test truncation with short text (should not truncate)
+        short_text = "Short"
+        result = TextProcessor.truncate_with_ellipsis(short_text, 100)
+        if result != short_text:
+            print("   ❌ Short text incorrectly truncated")
+            return False
+        
+        print("   ✅ TextProcessor working correctly")
+        return True
+        
+    except Exception as e:
+        print(f"   ❌ TextProcessor error: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+
+def main():
+    """Run utility tests"""
+    print("=" * 60)
+    print("🧪 RUNNING UTILITY MODULE TESTS")
+    print("=" * 60)
+    print()
+    
+    tests = [
+        ("URLValidator", test_url_validator),
+        ("TextProcessor", test_text_processor),
+    ]
+    
+    results = []
+    
+    for name, test_func in tests:
+        try:
+            result = test_func()
+            results.append((name, result))
+        except Exception as e:
+            print(f"   💥 Unexpected error: {e}")
+            results.append((name, False))
+        print()
+    
+    # Summary
+    print("=" * 60)
+    print("📊 TEST SUMMARY")
+    print("=" * 60)
+    
+    passed = sum(1 for _, result in results if result)
+    total = len(results)
+    
+    for name, result in results:
+        status = "✅ PASS" if result else "❌ FAIL"
+        print(f"{status}: {name}")
+    
+    print()
+    print(f"Results: {passed}/{total} tests passed")
+    
+    if passed == total:
+        print("\n🎉 ALL UTILITY TESTS PASSED!")
+        return 0
+    else:
+        print("\n⚠️  Some tests failed. Please check the errors above.")
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -8,7 +8,14 @@ import os
 from typing import Dict, List
 from dotenv import load_dotenv
 
+# Import utility modules
+from utils import TextProcessor
+
 load_dotenv()
+
+# Constants for YouTube limits
+YOUTUBE_COMMUNITY_POST_LIMIT = 5000
+YOUTUBE_TRUNCATE_OFFSET = 50
 
 
 class PublishingPlatform:
@@ -29,10 +36,6 @@ class PublishingPlatform:
 
 class YouTubePlatform(PublishingPlatform):
     """YouTube publishing via YouTube Data API v3"""
-    
-    # Constants for YouTube limits
-    YOUTUBE_COMMUNITY_POST_LIMIT = 5000
-    YOUTUBE_TRUNCATE_OFFSET = 50
     
     def __init__(self, config: Dict):
         super().__init__(config)
@@ -81,12 +84,15 @@ class YouTubePlatform(PublishingPlatform):
             with open(token_file, 'wb') as token:
                 pickle.dump(creds, token)
         
-        # Convert markdown to plain text for YouTube community post
-        plain_text = self._markdown_to_plain_text(content)
+        # Convert markdown to plain text for YouTube community post using optimized utility
+        plain_text = TextProcessor.markdown_to_plain_text(content)
         
-        # Truncate if too long (YouTube community posts have character limits)
-        if len(plain_text) > self.YOUTUBE_COMMUNITY_POST_LIMIT:
-            plain_text = plain_text[:self.YOUTUBE_COMMUNITY_POST_LIMIT - self.YOUTUBE_TRUNCATE_OFFSET] + "\n\n... [Read more in the full post]"
+        # Truncate if too long using optimized utility
+        plain_text = TextProcessor.truncate_with_ellipsis(
+            plain_text, 
+            YOUTUBE_COMMUNITY_POST_LIMIT - YOUTUBE_TRUNCATE_OFFSET,
+            "\n\n... [Read more in the full post]"
+        )
         
         # Note: YouTube Community Post API requires special access and is not publicly available
         # The API client is built but the endpoint requires special permissions from YouTube
@@ -100,29 +106,6 @@ class YouTubePlatform(PublishingPlatform):
             'instructions': 'Copy the content and post manually at: https://studio.youtube.com/channel/{}/posts'.format(self.channel_id),
             'credentials_ready': True
         }
-    
-    def _markdown_to_plain_text(self, markdown_text: str) -> str:
-        """Convert markdown to plain text for YouTube"""
-        import re
-        
-        text = markdown_text
-        
-        # Remove markdown headers (convert to bold text)
-        text = re.sub(r'^#{1,6}\s+(.+)$', r'\1', text, flags=re.MULTILINE)
-        
-        # Convert bold to uppercase (YouTube doesn't support bold in community posts)
-        text = re.sub(r'\*\*(.+?)\*\*', r'\1', text)
-        
-        # Convert links to plain format
-        text = re.sub(r'\[(.+?)\]\((.+?)\)', r'\1: \2', text)
-        
-        # Remove horizontal rules
-        text = re.sub(r'^-{3,}$', '', text, flags=re.MULTILINE)
-        
-        # Clean up multiple newlines
-        text = re.sub(r'\n{3,}', '\n\n', text)
-        
-        return text.strip()
 
 
 class ContentPublisher:
