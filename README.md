@@ -40,6 +40,7 @@ cd money
 
 # Interactive prompts for GitHub Actions setup
 ```
+**Windows users:** run `scripts\complete-setup.cmd` in Command Prompt or `.\scripts\complete-setup.ps1` in PowerShell (requires Git Bash or WSL).
 
 ### Option 3: Manual Setup
 ```bash

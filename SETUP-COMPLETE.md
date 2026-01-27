@@ -10,6 +10,8 @@ You asked to "Configure and write everything needed to automate this process and
 ./scripts/complete-setup.sh
 ```
 
+**Windows users:** run `scripts\complete-setup.cmd` in Command Prompt or `.\scripts\complete-setup.ps1` in PowerShell (requires Git Bash or WSL).
+
 This single command:
 1. ✅ Checks all dependencies
 2. 🔐 Configures GitHub Secrets automatically
