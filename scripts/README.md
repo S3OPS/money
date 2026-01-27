@@ -10,6 +10,8 @@ This directory contains scripts to fully automate the setup and configuration of
 
 This single script will handle everything for you!
 
+**Windows users:** run `scripts\complete-setup.cmd` in Command Prompt or `.\scripts\complete-setup.ps1` in PowerShell (requires Git Bash or WSL).
+
 ## 📋 Available Scripts
 
 ### 1. `complete-setup.sh` - Complete Automated Setup
@@ -25,6 +27,14 @@ This is your all-in-one automation script that:
 **Usage:**
 ```bash
 ./scripts/complete-setup.sh
+```
+
+**Windows usage:**
+```powershell
+.\scripts\complete-setup.ps1
+```
+```cmd
+scripts\complete-setup.cmd
 ```
 
 **Requirements:**

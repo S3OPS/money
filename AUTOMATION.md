@@ -10,6 +10,8 @@ This repository is now fully automated with GitHub Actions workflows! This guide
 ./scripts/complete-setup.sh
 ```
 
+**Windows users:** run `scripts\complete-setup.cmd` in Command Prompt or `.\scripts\complete-setup.ps1` in PowerShell (requires Git Bash or WSL).
+
 This single script will:
 - ✅ Verify dependencies
 - 🔐 Configure GitHub Secrets automatically
