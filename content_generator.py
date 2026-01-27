@@ -14,57 +14,57 @@ import time
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict
-from urllib.parse import urlparse
 from dotenv import load_dotenv
 
 # Import content publisher
 from content_publisher import ContentPublisher
 
+# Import utility modules
+from utils import URLValidator, InputValidator, ConfigValidator
+
 # Load environment variables
 load_dotenv()
+
+# Constants
+DEFAULT_TRACKING_SUFFIX = "-20"
 
 
 class AmazonAssociateLinker:
     """Handles Amazon Associate link generation"""
     
+    # Region-to-domain mapping (extracted as constant for optimization)
+    REGION_URLS = {
+        "US": "https://www.amazon.com",
+        "UK": "https://www.amazon.co.uk",
+        "CA": "https://www.amazon.ca",
+        "DE": "https://www.amazon.de",
+        "FR": "https://www.amazon.fr",
+        "JP": "https://www.amazon.co.jp"
+    }
+    
     def __init__(self, associate_id: str, tracking_id: str = None):
+        # Validate associate ID for security
+        if not InputValidator.validate_associate_id(associate_id):
+            raise ValueError("Invalid Amazon Associate ID format")
+        
         self.associate_id = associate_id
-        self.tracking_id = tracking_id or f"{associate_id}-20"
+        self.tracking_id = tracking_id or f"{associate_id}{DEFAULT_TRACKING_SUFFIX}"
     
     def generate_link(self, asin: str, region: str = "US") -> str:
         """Generate an Amazon affiliate link for a product ASIN"""
-        base_urls = {
-            "US": "https://www.amazon.com",
-            "UK": "https://www.amazon.co.uk",
-            "CA": "https://www.amazon.ca",
-            "DE": "https://www.amazon.de",
-            "FR": "https://www.amazon.fr",
-            "JP": "https://www.amazon.co.jp"
-        }
+        # Validate ASIN for security
+        if not InputValidator.validate_asin(asin):
+            raise ValueError(f"Invalid ASIN format: {asin}")
         
-        base_url = base_urls.get(region, base_urls["US"])
+        base_url = self.REGION_URLS.get(region, self.REGION_URLS["US"])
         return f"{base_url}/dp/{asin}?tag={self.tracking_id}"
     
     def add_affiliate_tag(self, product_url: str) -> str:
         """Add affiliate tag to existing Amazon URL"""
-        # More secure URL validation - check if URL is from Amazon domains
-        try:
-            parsed = urlparse(product_url)
-            # Explicitly check for exact Amazon domain matches
-            amazon_domains = {
-                'www.amazon.com', 'amazon.com',
-                'www.amazon.co.uk', 'amazon.co.uk',
-                'www.amazon.ca', 'amazon.ca',
-                'www.amazon.de', 'amazon.de',
-                'www.amazon.fr', 'amazon.fr',
-                'www.amazon.co.jp', 'amazon.co.jp'
-            }
-            
-            if parsed.netloc in amazon_domains:
-                separator = "&" if "?" in product_url else "?"
-                return f"{product_url}{separator}tag={self.tracking_id}"
-        except Exception:
-            pass  # If URL parsing fails, return original
+        # Use centralized URL validator for security
+        if URLValidator.is_valid_amazon_url(product_url):
+            separator = "&" if "?" in product_url else "?"
+            return f"{product_url}{separator}tag={self.tracking_id}"
         
         return product_url
 
@@ -194,6 +194,9 @@ class ContentGenerator:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"content_{timestamp}.md"
         
+        # Sanitize filename to prevent path traversal attacks
+        filename = InputValidator.sanitize_filename(filename)
+        
         filepath = self.output_dir / filename
         filepath.write_text(content, encoding='utf-8')
         
@@ -206,6 +209,12 @@ class AutomatedContentSystem:
     def __init__(self, config_path: str = "config.yaml"):
         with open(config_path, 'r') as f:
             self.config = yaml.safe_load(f)
+        
+        # Validate configuration for security and correctness
+        config_errors = ConfigValidator.validate_config(self.config)
+        if config_errors:
+            error_msg = "Configuration validation errors:\n" + "\n".join(f"  - {err}" for err in config_errors)
+            raise ValueError(error_msg)
         
         self.generator = ContentGenerator(self.config)
         self.publisher = ContentPublisher(self.config)

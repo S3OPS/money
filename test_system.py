@@ -10,7 +10,9 @@ import tempfile
 import shutil
 import traceback
 from pathlib import Path
-from urllib.parse import urlparse
+
+# Import utility modules
+from utils import URLValidator
 
 
 def test_imports():
@@ -69,21 +71,15 @@ def test_amazon_linker():
         # Test link generation
         link = linker.generate_link("B08N5WRWNW", "US")
         
-        # More secure validation - check URL format properly
-        try:
-            parsed = urlparse(link)
-            # Use exact domain matching instead of substring check
-            is_amazon = parsed.netloc in {'www.amazon.com', 'amazon.com'}
-            has_tag = "test-id-20" in link
-            
-            if is_amazon and has_tag:
-                print(f"   ✅ Generated link: {link}")
-                return True
-            else:
-                print(f"   ❌ Invalid link generated: {link}")
-                return False
-        except Exception as e:
-            print(f"   ❌ Link validation error: {e}")
+        # Use centralized URL validator
+        is_amazon = URLValidator.is_valid_amazon_url(link)
+        has_tag = "test-id-20" in link
+        
+        if is_amazon and has_tag:
+            print(f"   ✅ Generated link: {link}")
+            return True
+        else:
+            print(f"   ❌ Invalid link generated: {link}")
             return False
             
     except Exception as e:
@@ -117,21 +113,13 @@ def test_content_generation():
             # Generate content
             content = generator.generate_content_post("Test Category")
             
-            # Validate content - check for Amazon links more securely
-            # Find all URLs in content
+            # Validate content using centralized validator
             url_pattern = r'https?://[^\s\)]+'
             urls = re.findall(url_pattern, content)
             
             # Check if we have valid Amazon affiliate links
-            amazon_domains = {'www.amazon.com', 'amazon.com'}
-            valid_amazon_links = 0
-            for url in urls:
-                try:
-                    parsed = urlparse(url)
-                    if parsed.netloc in amazon_domains and 'test-id-20' in url:
-                        valid_amazon_links += 1
-                except Exception:
-                    pass
+            valid_amazon_links = sum(1 for url in urls 
+                                    if URLValidator.is_valid_amazon_url(url) and 'test-id-20' in url)
             
             if len(content) > 100 and valid_amazon_links > 0:
                 print("   ✅ Content generated successfully")
