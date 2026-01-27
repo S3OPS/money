@@ -34,6 +34,11 @@ class ConfigValidator:
         """
         errors = []
         
+        # Type check
+        if not isinstance(config, dict):
+            errors.append('Configuration must be a dictionary')
+            return errors
+        
         # Check required top-level keys
         missing_keys = cls.REQUIRED_KEYS - set(config.keys())
         if missing_keys:

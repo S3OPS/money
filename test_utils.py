@@ -136,22 +136,22 @@ def test_input_validator():
         
         # Test filename sanitization
         dangerous_filenames = [
-            "../../../etc/passwd",
-            "test/../../secret.txt",
-            "file<script>.md",
-            ".hidden",
-            "A" * 300 + ".txt",
+            ("../../../etc/passwd", "passwd"),  # Path traversal
+            ("test/../../secret.txt", "secret.txt"),  # Path traversal
+            ("file<script>.md", "file_script_.md"),  # Dangerous chars
+            (".hidden", "file_.hidden"),  # Hidden file
+            ("A" * 300 + ".txt", None),  # Too long
         ]
         
-        for filename in dangerous_filenames:
+        for filename, expected_prefix in dangerous_filenames:
             sanitized = InputValidator.sanitize_filename(filename)
             # Should not contain path separators
             if "/" in sanitized or "\\" in sanitized:
-                print(f"   ❌ Path separator not removed: {sanitized}")
+                print(f"   ❌ Path separator not removed from '{filename}': {sanitized}")
                 return False
-            # Should not start with dot (hidden file)
-            if sanitized.startswith('.') and not filename.endswith('.txt'):
-                print(f"   ❌ Hidden file issue: {sanitized}")
+            # Check expected prefix if provided
+            if expected_prefix and not sanitized.startswith(expected_prefix):
+                print(f"   ❌ Unexpected sanitization for '{filename}': got '{sanitized}', expected prefix '{expected_prefix}'")
                 return False
         
         # Test associate ID validation

@@ -54,7 +54,7 @@ class InputValidator:
         filename = Path(filename).name
         
         # Remove potentially dangerous characters
-        filename = re.sub(r'[^\w\-\.]', '_', filename)
+        filename = re.sub(r'[^\w.\-]', '_', filename)
         
         # Limit length
         if len(filename) > cls.MAX_FILENAME_LENGTH:
@@ -67,8 +67,8 @@ class InputValidator:
             else:
                 filename = filename[:cls.MAX_FILENAME_LENGTH]
         
-        # Prevent empty or hidden files
-        if not filename or filename.startswith('.'):
+        # Prevent hidden files
+        if filename.startswith('.'):
             filename = f"file_{filename}"
         
         return filename
