@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 from content_publisher import ContentPublisher
 
 # Import utility modules
-from utils import URLValidator
+from utils import URLValidator, InputValidator, ConfigValidator
 
 # Load environment variables
 load_dotenv()
@@ -43,11 +43,19 @@ class AmazonAssociateLinker:
     }
     
     def __init__(self, associate_id: str, tracking_id: str = None):
+        # Validate associate ID for security
+        if not InputValidator.validate_associate_id(associate_id):
+            raise ValueError("Invalid Amazon Associate ID format")
+        
         self.associate_id = associate_id
         self.tracking_id = tracking_id or f"{associate_id}{DEFAULT_TRACKING_SUFFIX}"
     
     def generate_link(self, asin: str, region: str = "US") -> str:
         """Generate an Amazon affiliate link for a product ASIN"""
+        # Validate ASIN for security
+        if not InputValidator.validate_asin(asin):
+            raise ValueError(f"Invalid ASIN format: {asin}")
+        
         base_url = self.REGION_URLS.get(region, self.REGION_URLS["US"])
         return f"{base_url}/dp/{asin}?tag={self.tracking_id}"
     
@@ -186,6 +194,9 @@ class ContentGenerator:
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             filename = f"content_{timestamp}.md"
         
+        # Sanitize filename to prevent path traversal attacks
+        filename = InputValidator.sanitize_filename(filename)
+        
         filepath = self.output_dir / filename
         filepath.write_text(content, encoding='utf-8')
         
@@ -198,6 +209,12 @@ class AutomatedContentSystem:
     def __init__(self, config_path: str = "config.yaml"):
         with open(config_path, 'r') as f:
             self.config = yaml.safe_load(f)
+        
+        # Validate configuration for security and correctness
+        config_errors = ConfigValidator.validate_config(self.config)
+        if config_errors:
+            error_msg = "Configuration validation errors:\n" + "\n".join(f"  - {err}" for err in config_errors)
+            raise ValueError(error_msg)
         
         self.generator = ContentGenerator(self.config)
         self.publisher = ContentPublisher(self.config)
