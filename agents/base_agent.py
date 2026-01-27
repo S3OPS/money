@@ -94,7 +94,7 @@ class BaseAgent(ABC):
             'pending_tasks': self.tasks_pending,
             'success_rate': (
                 len(self.tasks_completed) / (len(self.tasks_completed) + len(self.tasks_pending))
-                if (self.tasks_completed or self.tasks_pending) else 1.0
+                if (len(self.tasks_completed) + len(self.tasks_pending)) > 0 else 1.0
             )
         }
     

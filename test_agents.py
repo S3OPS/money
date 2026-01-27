@@ -239,7 +239,7 @@ def test_orchestrator():
 
 
 def test_text_processor_extract_heading():
-    """Test the new extract_heading method"""
+    """Test extract_heading method for valid headings, different levels, no heading, and empty input"""
     print("🧪 Testing TextProcessor.extract_heading...")
     
     try:
