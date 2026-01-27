@@ -69,3 +69,27 @@ class TextProcessor:
             truncate_at = max_length
             
         return text[:truncate_at] + ellipsis
+    
+    @classmethod
+    def extract_heading(cls, markdown_text: str, default: str = "Generated Content") -> str:
+        """
+        Extract the first heading from markdown text
+        
+        Args:
+            markdown_text: Markdown formatted text
+            default: Default value if no heading found
+            
+        Returns:
+            The first heading text, or default if none found
+        """
+        if not markdown_text:
+            return default
+        
+        # Find the first heading
+        match = cls._HEADER_PATTERN.search(markdown_text)
+        if match:
+            heading = match.group(1).strip()
+            if heading:
+                return heading
+        
+        return default

@@ -20,7 +20,7 @@ from dotenv import load_dotenv
 from content_publisher import ContentPublisher
 
 # Import utility modules
-from utils import URLValidator, InputValidator, ConfigValidator
+from utils import URLValidator, InputValidator, ConfigValidator, TextProcessor
 
 # Load environment variables
 load_dotenv()
@@ -233,19 +233,8 @@ class AutomatedContentSystem:
         filepath = self.generator.save_content(content)
         print(f"✅ Content saved to: {filepath}")
         
-        # Extract title from content (first line starting with #)
-        title = "Generated Content"
-        for line in content.split('\n'):
-            stripped = line.strip()
-            if stripped.startswith('#'):
-                # Remove all leading # characters and whitespace
-                title = stripped.lstrip('#').strip()
-                if title:  # Only use if we got a non-empty title
-                    break
-        
-        # Fallback to a descriptive title if extraction failed
-        if not title or title == "Generated Content":
-            title = f"{category} Products - {datetime.now().strftime('%B %d, %Y')}"
+        # Extract title from content using utility method
+        title = TextProcessor.extract_heading(content, f"{category} Products - {datetime.now().strftime('%B %d, %Y')}")
         
         # Generate metadata
         metadata = {
