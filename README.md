@@ -1,4 +1,4 @@
-# 💰 Automated Content Creation System
+# 💰 Automated Content Creation System for Amazon Associates
 
 [![CI](https://github.com/S3OPS/money/actions/workflows/ci.yml/badge.svg)](https://github.com/S3OPS/money/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/S3OPS/money/actions/workflows/codeql.yml/badge.svg)](https://github.com/S3OPS/money/actions/workflows/codeql.yml)
