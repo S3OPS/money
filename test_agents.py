@@ -7,8 +7,13 @@ import sys
 import io
 
 # Fix Unicode encoding issues on Windows
-if hasattr(sys.stdout, 'buffer') and sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+try:
+    if hasattr(sys.stdout, 'buffer') and sys.stdout.encoding:
+        encoding = sys.stdout.encoding.lower().replace('_', '-')
+        if encoding != 'utf-8':
+            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+except (AttributeError, ValueError, LookupError):
+    pass  # If encoding setup fails, continue with default encoding
 
 from agents import (
     BaseAgent,
