@@ -93,8 +93,14 @@ This repository includes GitHub Actions workflows for:
 - ✅ Continuous Integration (tests on Python 3.8-3.11)
 - 🔒 Security scanning (CodeQL, dependency checks)
 - 📅 Scheduled content generation (daily at 9 AM UTC)
+- 🔐 **NEW:** Automated secrets validation and setup wizard
 
-See [AUTOMATION.md](AUTOMATION.md) for setup instructions.
+**Quick Setup:**
+1. Go to **Actions** tab → **Setup Wizard**
+2. Click **Run workflow** to check your configuration
+3. Follow the automated instructions to configure credentials
+
+See [AUTOMATION.md](AUTOMATION.md) or [SECRETS_SETUP.md](SECRETS_SETUP.md) for detailed setup instructions.
 
 ## 🔐 Security
 

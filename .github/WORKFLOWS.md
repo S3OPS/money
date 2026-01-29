@@ -1,7 +1,7 @@
 # GitHub Actions Workflow Summary
 
 ## Overview
-This repository has 4 automated workflows configured in `.github/workflows/`:
+This repository has 6 automated workflows configured in `.github/workflows/`:
 
 ## 1. CI - Tests and Code Quality (`ci.yml`)
 - **Purpose**: Automated testing and code quality validation
@@ -45,6 +45,31 @@ This repository has 4 automated workflows configured in `.github/workflows/`:
   - Comment on PRs
 - **Fail Level**: Moderate or higher severity
 
+## 5. Validate Secrets (`validate-secrets.yml`) 🆕
+- **Purpose**: Automatically check if required GitHub secrets are configured
+- **Triggers**: Push/PR to main/develop, manual
+- **Jobs**:
+  - Validates AMAZON_ASSOCIATE_ID exists
+  - Validates AMAZON_TRACKING_ID exists
+  - Checks optional YouTube secrets
+  - Provides setup instructions if secrets are missing
+- **Benefits**:
+  - Immediate feedback on missing credentials
+  - Clear instructions for fixing configuration
+  - No workflow failures, just warnings
+
+## 6. Setup Wizard (`setup-wizard.yml`) 🆕
+- **Purpose**: Interactive wizard to help configure GitHub secrets
+- **Triggers**: Manual only (workflow_dispatch)
+- **Options**:
+  - **Check current configuration**: See which secrets are configured
+  - **View setup instructions**: Get detailed setup guides
+  - **Generate setup commands**: Get ready-to-use CLI commands
+- **Benefits**:
+  - User-friendly guided setup
+  - Multiple setup method options
+  - No code cloning required for basic checks
+
 ## Configuration Checklist
 
 ### For Local Development
@@ -65,6 +90,27 @@ All workflows are configured and ready to run. To see them in action:
 1. Navigate to the Actions tab in GitHub
 2. Select any workflow
 3. Click "Run workflow" to test manually
+
+### Using the New Automated Secret Setup Features 🆕
+
+#### Quick Check Your Configuration
+1. Go to **Actions** tab
+2. Click **Setup Wizard** workflow
+3. Click **Run workflow**
+4. Select "Check current configuration"
+5. Review which secrets are configured
+
+#### Get Setup Commands
+1. Go to **Actions** tab
+2. Click **Setup Wizard** workflow
+3. Click **Run workflow**
+4. Select "Generate setup commands"
+5. Copy and run the commands provided
+
+#### Automatic Validation
+- The **Validate Secrets** workflow runs automatically on every push/PR
+- It warns if secrets are missing but doesn't fail the build
+- Check workflow run summaries for setup instructions
 
 ## Maintenance Notes
 - CodeQL runs weekly (Sundays at midnight UTC)

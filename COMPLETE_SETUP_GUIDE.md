@@ -365,6 +365,24 @@ Set up complete automation with GitHub Actions for:
 - 🔒 Security scanning (CodeQL, dependency checks)
 - 📅 Scheduled content generation (daily)
 - 📊 Code quality checks
+- 🔐 **NEW:** Automated secrets validation and setup wizard
+
+### Quick Check: Are Your Secrets Configured? (NEW! ✨)
+
+**No cloning or installation required!**
+
+1. Go to your repository on GitHub
+2. Click the **Actions** tab
+3. Click **Setup Wizard** workflow
+4. Click **Run workflow** button
+5. Select "Check current configuration"
+6. View the summary to see which secrets are configured
+
+**Or check validation automatically:**
+- Every push/PR runs the **Validate Secrets** workflow
+- Check the workflow run summary for your secret status
+
+See [SECRETS_SETUP.md](SECRETS_SETUP.md) for complete automated setup guide.
 
 ### Quick Setup (Automated)
 
@@ -383,6 +401,20 @@ This script will:
 
 #### 1. Configure GitHub Secrets
 
+**NEW: Multiple Easy Methods Available!**
+
+**Method 1: Automated Setup Wizard (Recommended)**
+1. Go to **Actions** tab in your repository
+2. Click **Setup Wizard** workflow
+3. Click **Run workflow**
+4. Choose an option:
+   - Check current configuration
+   - View setup instructions
+   - Generate setup commands
+5. Follow the instructions provided
+
+**Method 2: Traditional Manual Setup**
+
 Navigate to your repository on GitHub:
 1. Go to **Settings** → **Secrets and variables** → **Actions**
 2. Click **New repository secret**
@@ -396,6 +428,8 @@ Navigate to your repository on GitHub:
 - `YOUTUBE_CHANNEL_ID` - Your YouTube channel ID
 - `YOUTUBE_CREDENTIALS_FILE` - Path to OAuth credentials JSON
 - `YOUTUBE_API_KEY` - YouTube API key
+
+**For detailed instructions, see [SECRETS_SETUP.md](SECRETS_SETUP.md)**
 
 #### 2. Enable Workflows
 

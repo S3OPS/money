@@ -111,7 +111,30 @@ You need to add secrets in your repository settings for this to work:
 
 ### Setting Up Secrets
 
-#### Option 1: Automated Setup (Recommended)
+#### Option 1: Automated Validation & Setup Wizard (NEW! ✨)
+
+The repository now includes automated workflows to help you set up secrets:
+
+**Check Current Configuration:**
+1. Go to **Actions** tab in your repository
+2. Click on **Setup Wizard** workflow
+3. Click **Run workflow**
+4. Select "Check current configuration"
+5. Review the summary to see which secrets are configured
+
+**Get Setup Commands:**
+1. Go to **Actions** tab
+2. Click on **Setup Wizard** workflow
+3. Click **Run workflow**
+4. Select "Generate setup commands"
+5. Copy and run the generated commands
+
+**Automatic Validation:**
+- Every push/PR automatically validates that required secrets exist
+- Check the **Validate Secrets** workflow runs for immediate feedback
+- Warnings (not errors) if secrets are missing with setup instructions
+
+#### Option 2: Automated Setup Script (Recommended)
 
 Use the provided script to configure secrets automatically:
 
@@ -129,7 +152,7 @@ This interactive script will:
 - Install: `brew install gh` (macOS) or see [scripts/README.md](scripts/README.md)
 - Authenticate: `gh auth login`
 
-#### Option 2: Manual Setup
+#### Option 3: Manual Setup
 
 To enable automated content generation and publishing manually:
 
