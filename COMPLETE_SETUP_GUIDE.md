@@ -4,6 +4,15 @@
 
 This consolidated guide combines all setup, configuration, and installation instructions into a single document with the correct sequence order for starting and configuring the S3OPS/money automated content creation system.
 
+**📌 Important:** This guide consolidates information from the following documents into a single, sequential workflow:
+- README.md, QUICK_START.md, AUTOMATED_SETUP.md, SETUP-COMPLETE.md
+- AUTOMATION.md, PUBLISHING.md, YOUTUBE_SETUP.md
+- scripts/README.md, .github/WORKFLOWS.md
+
+**Use this guide for:** Complete setup from scratch following the correct sequence.
+
+**Use other guides for:** Quick reference after initial setup is complete.
+
 ---
 
 ## 📋 Table of Contents
