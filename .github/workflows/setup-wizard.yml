@@ -1,0 +1,182 @@
+name: Setup Wizard
+
+on:
+  workflow_dispatch:
+    inputs:
+      setup_type:
+        description: 'What do you want to set up?'
+        required: true
+        type: choice
+        options:
+          - 'Check current configuration'
+          - 'View setup instructions'
+          - 'Generate setup commands'
+        default: 'Check current configuration'
+
+jobs:
+  setup-wizard:
+    name: Setup Wizard
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Check Configuration
+      if: inputs.setup_type == 'Check current configuration' || inputs.setup_type == 'Generate setup commands'
+      id: check_config
+      run: |
+        echo "## 🔍 Configuration Check" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        missing_secrets=""
+        
+        # Check required secrets
+        echo "### Required Secrets:" >> $GITHUB_STEP_SUMMARY
+        if [ -z "${{ secrets.AMAZON_ASSOCIATE_ID }}" ]; then
+          echo "❌ **AMAZON_ASSOCIATE_ID** - Not configured" >> $GITHUB_STEP_SUMMARY
+          missing_secrets="${missing_secrets}AMAZON_ASSOCIATE_ID "
+        else
+          echo "✅ **AMAZON_ASSOCIATE_ID** - Configured" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ -z "${{ secrets.AMAZON_TRACKING_ID }}" ]; then
+          echo "❌ **AMAZON_TRACKING_ID** - Not configured" >> $GITHUB_STEP_SUMMARY
+          missing_secrets="${missing_secrets}AMAZON_TRACKING_ID "
+        else
+          echo "✅ **AMAZON_TRACKING_ID** - Configured" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Optional Secrets:" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -z "${{ secrets.YOUTUBE_CHANNEL_ID }}" ]; then
+          echo "⚪ **YOUTUBE_CHANNEL_ID** - Not configured (optional for YouTube publishing)" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "✅ **YOUTUBE_CHANNEL_ID** - Configured" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ -z "${{ secrets.YOUTUBE_CREDENTIALS_FILE }}" ]; then
+          echo "⚪ **YOUTUBE_CREDENTIALS_FILE** - Not configured (optional for YouTube publishing)" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "✅ **YOUTUBE_CREDENTIALS_FILE** - Configured" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ -z "${{ secrets.YOUTUBE_API_KEY }}" ]; then
+          echo "⚪ **YOUTUBE_API_KEY** - Not configured (optional for YouTube publishing)" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "✅ **YOUTUBE_API_KEY** - Configured" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "missing_secrets=$missing_secrets" >> $GITHUB_OUTPUT
+    
+    - name: Generate Setup Commands
+      if: inputs.setup_type == 'Generate setup commands'
+      run: |
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "---" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## 🛠️ Setup Commands" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        missing="${{ steps.check_config.outputs.missing_secrets }}"
+        
+        if [ -n "$missing" ]; then
+          echo "### Using GitHub CLI (gh)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Run these commands in your terminal (replace with your actual values):" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          
+          if [[ $missing == *"AMAZON_ASSOCIATE_ID"* ]]; then
+            echo 'gh secret set AMAZON_ASSOCIATE_ID --body "yourname-20" --repo ${{ github.repository }}' >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [[ $missing == *"AMAZON_TRACKING_ID"* ]]; then
+            echo 'gh secret set AMAZON_TRACKING_ID --body "yourname-20" --repo ${{ github.repository }}' >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Or use the automated setup script:" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo 'git clone https://github.com/${{ github.repository }}.git' >> $GITHUB_STEP_SUMMARY
+          echo 'cd money' >> $GITHUB_STEP_SUMMARY
+          echo './scripts/setup-secrets.sh' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+        else
+          echo "✅ All required secrets are already configured!" >> $GITHUB_STEP_SUMMARY
+        fi
+    
+    - name: View Setup Instructions
+      if: inputs.setup_type == 'View setup instructions'
+      run: |
+        echo "## 📖 Setup Instructions" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Quick Start Options" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Choose the setup method that works best for you:" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "#### Option 1: Automated Script (Recommended) 🚀" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Clone the repository and run the automated setup:" >> $GITHUB_STEP_SUMMARY
+        echo '```bash' >> $GITHUB_STEP_SUMMARY
+        echo 'git clone https://github.com/${{ github.repository }}.git' >> $GITHUB_STEP_SUMMARY
+        echo 'cd money' >> $GITHUB_STEP_SUMMARY
+        echo './scripts/setup-secrets.sh' >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "This interactive script will:" >> $GITHUB_STEP_SUMMARY
+        echo "- Guide you through adding required secrets" >> $GITHUB_STEP_SUMMARY
+        echo "- Optionally configure YouTube publishing" >> $GITHUB_STEP_SUMMARY
+        echo "- Verify secrets are set correctly" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "#### Option 2: Complete Automated Setup 🎯" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "For full setup including local environment:" >> $GITHUB_STEP_SUMMARY
+        echo '```bash' >> $GITHUB_STEP_SUMMARY
+        echo 'git clone https://github.com/${{ github.repository }}.git' >> $GITHUB_STEP_SUMMARY
+        echo 'cd money' >> $GITHUB_STEP_SUMMARY
+        echo './scripts/complete-setup.sh' >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "#### Option 3: GitHub CLI 💻" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "If you have GitHub CLI installed:" >> $GITHUB_STEP_SUMMARY
+        echo '```bash' >> $GITHUB_STEP_SUMMARY
+        echo 'gh secret set AMAZON_ASSOCIATE_ID --body "yourname-20" --repo ${{ github.repository }}' >> $GITHUB_STEP_SUMMARY
+        echo 'gh secret set AMAZON_TRACKING_ID --body "yourname-20" --repo ${{ github.repository }}' >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "#### Option 4: Manual Setup via GitHub UI 🖱️" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "1. Go to [Settings → Secrets and variables → Actions](https://github.com/${{ github.repository }}/settings/secrets/actions)" >> $GITHUB_STEP_SUMMARY
+        echo "2. Click **New repository secret**" >> $GITHUB_STEP_SUMMARY
+        echo "3. Add these required secrets:" >> $GITHUB_STEP_SUMMARY
+        echo "   - **AMAZON_ASSOCIATE_ID**: Your Amazon Associate ID (e.g., yourname-20)" >> $GITHUB_STEP_SUMMARY
+        echo "   - **AMAZON_TRACKING_ID**: Your tracking ID (usually same as Associate ID)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "### Required Information" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Before starting, you'll need:" >> $GITHUB_STEP_SUMMARY
+        echo "1. **Amazon Associate ID**: Get it from [Amazon Associates](https://affiliate-program.amazon.com/)" >> $GITHUB_STEP_SUMMARY
+        echo "   - Sign up for free if you don't have one" >> $GITHUB_STEP_SUMMARY
+        echo "   - Format: yourname-20" >> $GITHUB_STEP_SUMMARY
+        echo "2. **GitHub CLI** (for automated script): Install from [cli.github.com](https://cli.github.com/)" >> $GITHUB_STEP_SUMMARY
+        echo "   - macOS: \`brew install gh\`" >> $GITHUB_STEP_SUMMARY
+        echo "   - Then run: \`gh auth login\`" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "### Additional Resources" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- 📖 [Complete Setup Guide](https://github.com/${{ github.repository }}/blob/main/COMPLETE_SETUP_GUIDE.md)" >> $GITHUB_STEP_SUMMARY
+        echo "- 🤖 [Automation Documentation](https://github.com/${{ github.repository }}/blob/main/AUTOMATION.md)" >> $GITHUB_STEP_SUMMARY
+        echo "- 📋 [Scripts Documentation](https://github.com/${{ github.repository }}/blob/main/scripts/README.md)" >> $GITHUB_STEP_SUMMARY
+        echo "- 🚀 [Quick Start Guide](https://github.com/${{ github.repository }}/blob/main/QUICK_START.md)" >> $GITHUB_STEP_SUMMARY
