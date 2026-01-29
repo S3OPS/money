@@ -124,7 +124,7 @@ The repository now includes automated workflows to help you set up secrets:
 
 **Get Setup Commands:**
 1. Go to **Actions** tab
-2. Click on **Setup Wizard** workflow  
+2. Click on **Setup Wizard** workflow
 3. Click **Run workflow**
 4. Select "Generate setup commands"
 5. Copy and run the generated commands

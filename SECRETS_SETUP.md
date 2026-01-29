@@ -216,6 +216,10 @@ After setting up secrets, test that everything works:
 4. Wait for the workflow to complete (~2-3 minutes)
 5. Check that it completes successfully
 6. Download the artifacts to verify content was generated
+   - Scroll to the bottom of the workflow run page
+   - Look for the **Artifacts** section
+   - Click on the artifact (e.g., `generated-content-123`)
+   - The ZIP file contains the generated markdown files with affiliate links
 
 ## 🔒 Security Best Practices
 
@@ -263,7 +267,7 @@ sudo apt update
 sudo apt install gh
 
 # Windows
-winget install --id GitHub.cli
+winget install GitHub.CLI
 ```
 
 Then authenticate:
