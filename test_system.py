@@ -10,6 +10,11 @@ import tempfile
 import shutil
 import traceback
 from pathlib import Path
+import io
+
+# Fix Unicode encoding issues on Windows
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # Import utility modules
 from utils import URLValidator

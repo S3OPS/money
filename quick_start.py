@@ -13,6 +13,11 @@ import subprocess
 import sys
 import shutil
 import argparse
+import io
+
+# Fix Unicode encoding issues on Windows
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 
 def check_python_version():

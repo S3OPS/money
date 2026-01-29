@@ -4,6 +4,12 @@ Unit tests for utility modules
 """
 
 import sys
+import io
+
+# Fix Unicode encoding issues on Windows
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
 from utils import URLValidator, TextProcessor, InputValidator, ConfigValidator
 
 
