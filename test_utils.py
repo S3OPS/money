@@ -7,7 +7,7 @@ import sys
 import io
 
 # Fix Unicode encoding issues on Windows
-if sys.stdout.encoding != 'utf-8':
+if hasattr(sys.stdout, 'buffer') and sys.stdout.encoding and sys.stdout.encoding.lower() != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 from utils import URLValidator, TextProcessor, InputValidator, ConfigValidator
