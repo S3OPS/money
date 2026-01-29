@@ -6,6 +6,12 @@
 
 Automated product review content generator with Amazon Associates affiliate links. Generate content in seconds with minimal setup.
 
+## 📖 Complete Setup Guide
+
+**NEW!** → **[COMPLETE_SETUP_GUIDE.md](COMPLETE_SETUP_GUIDE.md)** - The consolidated guide for 100% automation setup
+
+This single comprehensive guide combines all setup, configuration, and installation instructions with the correct sequence order to take you from zero to fully automated operation.
+
 ## 🚀 Quick Start
 
 ```bash
@@ -21,6 +27,8 @@ python content_generator.py
 ```
 
 Your generated content will be in the `generated_content/` folder.
+
+**For detailed step-by-step instructions, see [COMPLETE_SETUP_GUIDE.md](COMPLETE_SETUP_GUIDE.md)**
 
 ## ✨ Features
 
@@ -69,10 +77,15 @@ python content_generator.py --schedule
 
 ## 📚 Documentation
 
-- **[QUICK_START.md](QUICK_START.md)** - Detailed setup guide with all options
+**Start Here:**
+- **[COMPLETE_SETUP_GUIDE.md](COMPLETE_SETUP_GUIDE.md)** - ⭐ **Complete setup guide with everything in sequence order for 100% automation**
+
+**Additional Guides:**
+- **[QUICK_START.md](QUICK_START.md)** - Quick reference for common tasks
 - **[AUTOMATION.md](AUTOMATION.md)** - GitHub Actions automation setup
 - **[PUBLISHING.md](PUBLISHING.md)** - YouTube publishing configuration
 - **[scripts/README.md](scripts/README.md)** - Setup scripts documentation
+- **[THE_ONE_RING.md](THE_ONE_RING.md)** - Master documentation hub
 
 ## 🤖 Automation
 
