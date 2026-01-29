@@ -8,6 +8,16 @@ import os
 import sys
 import subprocess
 from pathlib import Path
+import io
+
+# Fix Unicode encoding issues on Windows
+try:
+    if hasattr(sys.stdout, 'buffer') and sys.stdout.encoding:
+        encoding = sys.stdout.encoding.lower().replace('_', '-')
+        if encoding != 'utf-8':
+            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+except (AttributeError, ValueError, LookupError):
+    pass  # If encoding setup fails, continue with default encoding
 
 
 def print_header():

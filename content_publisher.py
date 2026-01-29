@@ -5,8 +5,19 @@ Automatically publishes generated content to various platforms
 """
 
 import os
+import sys
+import io
 from typing import Dict, List
 from dotenv import load_dotenv
+
+# Fix Unicode encoding issues on Windows
+try:
+    if hasattr(sys.stdout, 'buffer') and sys.stdout.encoding:
+        encoding = sys.stdout.encoding.lower().replace('_', '-')
+        if encoding != 'utf-8':
+            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+except (AttributeError, ValueError, LookupError):
+    pass  # If encoding setup fails, continue with default encoding
 
 # Import utility modules
 from utils import TextProcessor

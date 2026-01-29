@@ -15,6 +15,16 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Dict
 from dotenv import load_dotenv
+import io
+
+# Fix Unicode encoding issues on Windows
+try:
+    if hasattr(sys.stdout, 'buffer') and sys.stdout.encoding:
+        encoding = sys.stdout.encoding.lower().replace('_', '-')
+        if encoding != 'utf-8':
+            sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+except (AttributeError, ValueError, LookupError):
+    pass  # If encoding setup fails, continue with default encoding
 
 # Import content publisher
 from content_publisher import ContentPublisher
