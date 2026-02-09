@@ -136,6 +136,8 @@ class ContentGenerator:
         affiliate_link = self.linker.generate_link(asin, self.config['amazon']['api_region'])
         
         # Generate review content using efficient string building
+        # Templates are lists of strings to avoid repeated string concatenation overhead
+        # random.choice selects a template, then ''.join() builds the final string efficiently
         review_templates = [
             [
                 f"## {title}\n\n",
@@ -162,16 +164,23 @@ class ContentGenerator:
         
         return ''.join(random.choice(review_templates))
     
+    def _prepare_products_for_category(self, category: str) -> List[Dict]:
+        """Prepare products by adding category field to each product
+        
+        This helper method makes the intent clear and keeps product preparation logic separate.
+        """
+        return [
+            {**product, 'category': category}
+            for product in self.SAMPLE_PRODUCTS
+        ]
+    
     def generate_content_post(self, category: str = None) -> str:
         """Generate a full content post with multiple products"""
         if not category:
             category = random.choice(self.config['content']['categories'])
         
-        # Use class constant and add category to each product
-        sample_products = [
-            {**product, 'category': category}
-            for product in self.SAMPLE_PRODUCTS
-        ]
+        # Prepare products with category information
+        sample_products = self._prepare_products_for_category(category)
         
         # Select products for this post
         num_products = min(
