@@ -82,6 +82,35 @@ class AmazonAssociateLinker:
 class ContentGenerator:
     """Generates product review content"""
     
+    # Sample products as class constant (optimization - avoid recreation each call)
+    SAMPLE_PRODUCTS = [
+        {
+            'asin': 'B08N5WRWNW',
+            'title': 'Premium Wireless Headphones',
+            'price': '$79.99'
+        },
+        {
+            'asin': 'B08J5F3G18',
+            'title': 'Smart Home Device',
+            'price': '$49.99'
+        },
+        {
+            'asin': 'B07XJ8C8F5',
+            'title': 'Bestselling Book',
+            'price': '$14.99'
+        },
+        {
+            'asin': 'B08L5VFJ5C',
+            'title': 'Portable Charger',
+            'price': '$29.99'
+        },
+        {
+            'asin': 'B09JQMJHXY',
+            'title': 'Kitchen Gadget',
+            'price': '$39.99'
+        }
+    ]
+    
     def __init__(self, config: Dict):
         self.config = config
         amazon_config = config.get('amazon', {})
@@ -106,67 +135,42 @@ class ContentGenerator:
         
         affiliate_link = self.linker.generate_link(asin, self.config['amazon']['api_region'])
         
-        # Generate review content
+        # Generate review content using efficient string building
         review_templates = [
-            f"## {title}\n\n"
-            f"Looking for a great {category} option? The **{title}** is an excellent choice that delivers outstanding value.\n\n"
-            f"### Key Features:\n"
-            f"- Premium quality construction\n"
-            f"- Excellent customer reviews\n"
-            f"- Great value at {price}\n"
-            f"- Fast shipping available\n\n"
-            f"[**Check Current Price on Amazon**]({affiliate_link})\n\n"
-            f"This product has received excellent ratings from verified purchasers and is currently one of the best-selling items in its category.\n\n",
-            
-            f"## Product Spotlight: {title}\n\n"
-            f"If you're in the market for {category}, you'll want to check out the {title}. "
-            f"It's currently available at a competitive price of {price}.\n\n"
-            f"### Why We Recommend It:\n"
-            f"1. **Quality**: Built to last with premium materials\n"
-            f"2. **Performance**: Exceeds expectations in real-world use\n"
-            f"3. **Value**: Competitively priced for what you get\n\n"
-            f"[**View on Amazon →**]({affiliate_link})\n\n"
+            [
+                f"## {title}\n\n",
+                f"Looking for a great {category} option? The **{title}** is an excellent choice that delivers outstanding value.\n\n",
+                "### Key Features:\n",
+                "- Premium quality construction\n",
+                "- Excellent customer reviews\n",
+                f"- Great value at {price}\n",
+                "- Fast shipping available\n\n",
+                f"[**Check Current Price on Amazon**]({affiliate_link})\n\n",
+                "This product has received excellent ratings from verified purchasers and is currently one of the best-selling items in its category.\n\n"
+            ],
+            [
+                f"## Product Spotlight: {title}\n\n",
+                f"If you're in the market for {category}, you'll want to check out the {title}. ",
+                f"It's currently available at a competitive price of {price}.\n\n",
+                "### Why We Recommend It:\n",
+                "1. **Quality**: Built to last with premium materials\n",
+                "2. **Performance**: Exceeds expectations in real-world use\n",
+                "3. **Value**: Competitively priced for what you get\n\n",
+                f"[**View on Amazon →**]({affiliate_link})\n\n"
+            ]
         ]
         
-        return random.choice(review_templates)
+        return ''.join(random.choice(review_templates))
     
     def generate_content_post(self, category: str = None) -> str:
         """Generate a full content post with multiple products"""
         if not category:
             category = random.choice(self.config['content']['categories'])
         
-        # Sample products (in real use, these would come from Amazon API or database)
+        # Use class constant and add category to each product
         sample_products = [
-            {
-                'asin': 'B08N5WRWNW',
-                'title': 'Premium Wireless Headphones',
-                'category': category,
-                'price': '$79.99'
-            },
-            {
-                'asin': 'B08J5F3G18',
-                'title': 'Smart Home Device',
-                'category': category,
-                'price': '$49.99'
-            },
-            {
-                'asin': 'B07XJ8C8F5',
-                'title': 'Bestselling Book',
-                'category': category,
-                'price': '$14.99'
-            },
-            {
-                'asin': 'B08L5VFJ5C',
-                'title': 'Portable Charger',
-                'category': category,
-                'price': '$29.99'
-            },
-            {
-                'asin': 'B09JQMJHXY',
-                'title': 'Kitchen Gadget',
-                'category': category,
-                'price': '$39.99'
-            }
+            {**product, 'category': category}
+            for product in self.SAMPLE_PRODUCTS
         ]
         
         # Select products for this post
@@ -176,27 +180,33 @@ class ContentGenerator:
         )
         selected_products = random.sample(sample_products, num_products)
         
-        # Generate post header
+        # Build post using list for efficient string concatenation
         date_str = datetime.now().strftime("%B %d, %Y")
-        post = f"# Top {num_products} {category} Products - {date_str}\n\n"
-        post += f"*Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*\n\n"
-        post += f"Discover the best {category} products available on Amazon today. "
-        post += "We've curated this list to help you find exactly what you need.\n\n"
-        post += "---\n\n"
+        timestamp_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        
+        post_parts = [
+            f"# Top {num_products} {category} Products - {date_str}\n\n",
+            f"*Last updated: {timestamp_str}*\n\n",
+            f"Discover the best {category} products available on Amazon today. ",
+            "We've curated this list to help you find exactly what you need.\n\n",
+            "---\n\n"
+        ]
         
         # Add product reviews
         for i, product in enumerate(selected_products, 1):
-            post += f"### #{i} - {product['title']}\n\n"
-            post += self.generate_product_review(product)
-            post += "\n---\n\n"
+            post_parts.append(f"### #{i} - {product['title']}\n\n")
+            post_parts.append(self.generate_product_review(product))
+            post_parts.append("\n---\n\n")
         
         # Add footer
-        post += "\n## Disclosure\n\n"
-        post += "*As an Amazon Associate, we earn from qualifying purchases. "
-        post += "This means if you click on an affiliate link and make a purchase, "
-        post += "we may receive a small commission at no extra cost to you.*\n"
+        post_parts.extend([
+            "\n## Disclosure\n\n",
+            "*As an Amazon Associate, we earn from qualifying purchases. ",
+            "This means if you click on an affiliate link and make a purchase, ",
+            "we may receive a small commission at no extra cost to you.*\n"
+        ])
         
-        return post
+        return ''.join(post_parts)
     
     def save_content(self, content: str, filename: str = None) -> Path:
         """Save generated content to file"""
@@ -255,15 +265,7 @@ class AutomatedContentSystem:
             'affiliate_links': content.count('amazon.com')
         }
         
-        # Save metadata
-        metadata_path = filepath.with_suffix('.json')
-        with open(metadata_path, 'w', encoding='utf-8') as f:
-            json.dump(metadata, f, indent=2)
-        
-        print(f"📊 Metadata saved to: {metadata_path}")
-        print(f"📈 Generated {metadata['word_count']} words with {metadata['affiliate_links']} affiliate links")
-        
-        # Auto-publish if enabled
+        # Auto-publish if enabled (collect results before writing metadata)
         if self.config.get('publishing', {}).get('auto_publish', False):
             print("\n" + "=" * 60)
             print("📢 AUTO-PUBLISHING ENABLED")
@@ -279,10 +281,6 @@ class AutomatedContentSystem:
                 metadata['published'] = True
                 metadata['publishing_results'] = publish_results
                 
-                # Update metadata file
-                with open(metadata_path, 'w', encoding='utf-8') as f:
-                    json.dump(metadata, f, indent=2)
-                
                 # Summary
                 successful = sum(1 for r in publish_results if r.get('success', False))
                 total = len(publish_results)
@@ -295,6 +293,14 @@ class AutomatedContentSystem:
                 print("   Enable platforms to auto-publish content")
         else:
             print("\n💡 Tip: Enable auto_publish in config.yaml to automatically post content")
+        
+        # Save metadata once with all information (optimization - single write)
+        metadata_path = filepath.with_suffix('.json')
+        with open(metadata_path, 'w', encoding='utf-8') as f:
+            json.dump(metadata, f, indent=2)
+        
+        print(f"📊 Metadata saved to: {metadata_path}")
+        print(f"📈 Generated {metadata['word_count']} words with {metadata['affiliate_links']} affiliate links")
         
         return metadata
     
