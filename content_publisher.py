@@ -8,7 +8,6 @@ import os
 import sys
 import io
 from typing import Dict, List
-from dotenv import load_dotenv
 
 # Fix Unicode encoding issues on Windows
 try:
@@ -22,7 +21,8 @@ except (AttributeError, ValueError, LookupError):
 # Import utility modules
 from utils import TextProcessor
 
-load_dotenv()
+# Note: dotenv is loaded by content_generator.py at application startup
+# This avoids duplicate environment variable loading
 
 # Constants for YouTube limits
 YOUTUBE_COMMUNITY_POST_LIMIT = 5000
@@ -48,21 +48,23 @@ class PublishingPlatform:
 class YouTubePlatform(PublishingPlatform):
     """YouTube publishing via YouTube Data API v3"""
     
+    # Cache for credentials to avoid repeated file I/O (optimization)
+    _credentials_cache = None
+    _token_file = 'youtube_token.pickle'
+    
     def __init__(self, config: Dict):
         super().__init__(config)
         self.api_key = os.getenv('YOUTUBE_API_KEY') or config.get('api_key')
         self.channel_id = os.getenv('YOUTUBE_CHANNEL_ID') or config.get('channel_id')
         self.credentials_file = os.getenv('YOUTUBE_CREDENTIALS_FILE') or config.get('credentials_file')
         self.post_type = config.get('post_type', 'community')  # 'community' or 'video'
-        
-    def publish(self, title: str, content: str, metadata: Dict) -> Dict:
-        """Publish to YouTube as a Community Post
-        
-        Note: For video uploads, the content would need to be a video file.
-        Community posts are text-based and are a better fit for markdown content.
-        """
-        if not all([self.credentials_file, self.channel_id]):
-            raise ValueError("YouTube credentials file and channel ID not configured")
+    
+    @classmethod
+    def _load_credentials(cls, credentials_file: str):
+        """Load and cache YouTube credentials (optimization - avoid repeated I/O)"""
+        # Check cache first
+        if cls._credentials_cache is not None and cls._credentials_cache.valid:
+            return cls._credentials_cache
         
         try:
             from google_auth_oauthlib.flow import InstalledAppFlow
@@ -75,11 +77,10 @@ class YouTubePlatform(PublishingPlatform):
         SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
         
         creds = None
-        token_file = 'youtube_token.pickle'
         
         # Load saved credentials
-        if os.path.exists(token_file):
-            with open(token_file, 'rb') as token:
+        if os.path.exists(cls._token_file):
+            with open(cls._token_file, 'rb') as token:
                 creds = pickle.load(token)
         
         # If no valid credentials, authenticate
@@ -88,12 +89,28 @@ class YouTubePlatform(PublishingPlatform):
                 creds.refresh(Request())
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    self.credentials_file, SCOPES)
+                    credentials_file, SCOPES)
                 creds = flow.run_local_server(port=0)
             
             # Save credentials
-            with open(token_file, 'wb') as token:
+            with open(cls._token_file, 'wb') as token:
                 pickle.dump(creds, token)
+        
+        # Cache credentials
+        cls._credentials_cache = creds
+        return creds
+        
+    def publish(self, title: str, content: str, metadata: Dict) -> Dict:
+        """Publish to YouTube as a Community Post
+        
+        Note: For video uploads, the content would need to be a video file.
+        Community posts are text-based and are a better fit for markdown content.
+        """
+        if not all([self.credentials_file, self.channel_id]):
+            raise ValueError("YouTube credentials file and channel ID not configured")
+        
+        # Load credentials using cached method
+        creds = self._load_credentials(self.credentials_file)
         
         # Convert markdown to plain text for YouTube community post using optimized utility
         plain_text = TextProcessor.markdown_to_plain_text(content)

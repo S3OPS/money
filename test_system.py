@@ -11,6 +11,7 @@ import shutil
 import traceback
 from pathlib import Path
 import io
+import yaml
 
 # Fix Unicode encoding issues on Windows
 try:
@@ -23,6 +24,20 @@ except (AttributeError, ValueError, LookupError):
 
 # Import utility modules
 from utils import URLValidator
+
+# Compile URL regex pattern once for reuse (optimization)
+URL_PATTERN = re.compile(r'https?://[^\s\)]+')
+
+# Cache for config file (load once, reuse multiple times)
+_config_cache = None
+
+def load_config():
+    """Load and cache configuration file"""
+    global _config_cache
+    if _config_cache is None:
+        with open('config.yaml', 'r') as f:
+            _config_cache = yaml.safe_load(f)
+    return _config_cache
 
 
 def test_imports():
@@ -51,9 +66,7 @@ def test_config_file():
         return False
     
     try:
-        import yaml
-        with open('config.yaml', 'r') as f:
-            config = yaml.safe_load(f)
+        config = load_config()
         
         # Check required fields
         required_fields = ['amazon', 'content', 'schedule']
@@ -107,14 +120,11 @@ def test_content_generation():
         os.environ['AMAZON_TRACKING_ID'] = 'test-id-20'
         
         from content_generator import ContentGenerator
-        import yaml
         
-        # Load config
-        with open('config.yaml', 'r') as f:
-            config = yaml.safe_load(f)
+        # Load config from cache
+        config = load_config().copy()
         
         # Create temp directory for output
-        original_output = config['content']['output_directory']
         config['content']['output_directory'] = tempfile.mkdtemp()
         
         try:
@@ -123,9 +133,8 @@ def test_content_generation():
             # Generate content
             content = generator.generate_content_post("Test Category")
             
-            # Validate content using centralized validator
-            url_pattern = r'https?://[^\s\)]+'
-            urls = re.findall(url_pattern, content)
+            # Validate content using centralized validator and pre-compiled pattern
+            urls = URL_PATTERN.findall(content)
             
             # Check if we have valid Amazon affiliate links
             valid_amazon_links = sum(1 for url in urls 
@@ -158,10 +167,9 @@ def test_file_saving():
         os.environ['AMAZON_TRACKING_ID'] = 'test-id-20'
         
         from content_generator import ContentGenerator
-        import yaml
         
-        with open('config.yaml', 'r') as f:
-            config = yaml.safe_load(f)
+        # Load config from cache
+        config = load_config().copy()
         
         # Create temp directory
         temp_dir = tempfile.mkdtemp()
@@ -198,11 +206,9 @@ def test_system_integration():
         os.environ['AMAZON_TRACKING_ID'] = 'test-id-20'
         
         from content_generator import AutomatedContentSystem
-        import yaml
         
         # Load and modify config for testing
-        with open('config.yaml', 'r') as f:
-            config = yaml.safe_load(f)
+        config = load_config().copy()
         
         # Create temp config
         temp_config = tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False)
@@ -249,10 +255,9 @@ def test_publisher_initialization():
     
     try:
         from content_publisher import ContentPublisher
-        import yaml
         
-        with open('config.yaml', 'r') as f:
-            config = yaml.safe_load(f)
+        # Load config from cache
+        config = load_config()
         
         # Initialize publisher
         publisher = ContentPublisher(config)
@@ -292,11 +297,15 @@ def main():
     ]
     
     results = []
+    passed = 0
     
+    # Run tests and collect results in a single pass
     for name, test_func in tests:
         try:
             result = test_func()
             results.append((name, result))
+            if result:
+                passed += 1
         except Exception as e:
             print(f"   💥 Unexpected error: {e}")
             results.append((name, False))
@@ -307,7 +316,6 @@ def main():
     print("📊 TEST SUMMARY")
     print("=" * 60)
     
-    passed = sum(1 for _, result in results if result)
     total = len(results)
     
     for name, result in results:
